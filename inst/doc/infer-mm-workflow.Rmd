@@ -1,0 +1,149 @@
+---
+title: "A Workflow for Variance-Aware Michaelis-Menten Analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{A Workflow for Variance-Aware Michaelis-Menten Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+`inferMM` targets a common enzyme-kinetic workflow: fit a Michaelis-Menten
+curve, compare plausible working variance functions, and summarize inference in
+a way that is less sensitive to heteroscedasticity than ordinary nonlinear least
+squares alone. The same interface also supports clustered assay layouts in
+which repeated measurements within a core, plate, or sample may be correlated.
+
+## Single-curve fitting
+
+```{r}
+library(inferMM)
+
+one_curve <- subset(sdl_demo, enzyme == "1111")
+
+fit <- fit_mm(
+  x = one_curve$s_uM,
+  y = one_curve$v_uM_per_min,
+  variance = "sqrt"
+)
+
+summary(fit)
+
+fit_auto <- fit_mm(
+  x = one_curve$s_uM,
+  y = one_curve$v_uM_per_min,
+  variance = "auto",
+  power_selection = "quasi_aic"
+)
+
+summary(fit_auto)
+```
+
+The fitted object supports extraction of coefficients, Wald confidence
+intervals, bootstrap confidence intervals, and predictions.
+
+```{r}
+coef(fit)
+confint(fit)
+set.seed(1)
+confint(fit, method = "bootstrap", B = 99)
+head(predict(fit, newdata = seq(0, 80, length.out = 6), interval = "prediction"))
+```
+
+For a one-step console summary plus a 95\% confidence band, use:
+
+```{r, eval = FALSE}
+report_mm(fit, interval_type = "confidence")
+set.seed(1)
+report_mm(fit, method = "bootstrap", B = 99,
+          interval_type = "confidence")
+```
+
+## Screening working variance models
+
+```{r}
+screen <- screen_mm(
+  x = one_curve$s_uM,
+  y = one_curve$v_uM_per_min,
+  power_values = c(0.4, 0.6),
+  include_auto = TRUE,
+  quiet = TRUE
+)
+
+screen$table[, c("model", "selected_model", "quasi_aic", "quasi_bic", "rmse")]
+```
+
+The screening table is ordered by quasi-AIC, with quasi-BIC and RMSE reported
+as secondary summaries.
+
+## Grouped analyses
+
+For real enzyme panels we often fit many curves at once and then compare the
+best model within each group.
+
+```{r}
+grouped <- group_mm(
+  data = sdl_demo,
+  s = "s_uM",
+  v = "v_uM_per_min",
+  groups = "enzyme",
+  variance_models = c("constant", "log", "sqrt", "cuberoot"),
+  power_values = c(0.4, 0.6),
+  include_auto = TRUE,
+  quiet = TRUE
+)
+
+head(grouped$comparison$best_by_group[, c("group_label", "model", "selected_model", "quasi_aic", "quasi_bic", "rmse")])
+```
+
+To visualize the current best model for each group, use the grouped plotting
+method.
+
+```{r, eval = FALSE}
+plot(grouped, interval_type = "confidence")
+```
+
+## Clustered repeated measurements
+
+For repeated or clustered assays, `cluster_mm()` uses a Ma-Genton-style
+working covariance with a random effect on `Vmax` and a low-dimensional
+residual variance function. The bundled `alves_demo` data illustrate the
+interface on a small soil-enzyme panel.
+
+```{r}
+cluster_fit <- cluster_mm(
+  data = subset(alves_demo, enzyme == "BG"),
+  s = "substrate_conc",
+  v = "activity",
+  cluster = "core",
+  variance = "sqrt"
+)
+
+summary(cluster_fit)
+confint(cluster_fit)
+head(predict(cluster_fit, newdata = seq(0, 700, length.out = 6),
+             interval = "confidence"))
+```
+
+Because the bundled example contains only three cores, the printed summary
+reports point estimates by default and treats interval output as an explicit
+sensitivity analysis.
+
+## Simulation
+
+```{r}
+set.seed(100)
+sim_dat <- simulate_mm_data(variance_shape = "hill", error = "skewed")
+head(sim_dat)
+```
+
+The package is intentionally lightweight: it relies only on base and
+recommended R packages, while keeping the workflow close to the heteroscedastic
+and clustered Michaelis-Menten analyses used in the companion methodology
+paper.
