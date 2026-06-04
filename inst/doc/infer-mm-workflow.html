@@ -409,236 +409,234 @@ predictions.</p>
 <span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt;          lower     upper</span></span>
 <span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; Vmax  6.259256  6.604505</span></span>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; Km   71.785829 81.072301</span></span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="fu">confint</span>(fit, <span class="at">method =</span> <span class="st">&quot;bootstrap&quot;</span>, <span class="at">B =</span> <span class="dv">99</span>)</span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt;          lower    upper</span></span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; Vmax  6.224301  6.63876</span></span>
-<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; Km   71.079881 80.97992</span></span>
-<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;bootstrap_draws&quot;)</span></span>
-<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt;            Vmax       Km</span></span>
-<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt;   [1,] 6.476014 79.83447</span></span>
-<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt;   [2,] 6.378489 74.52054</span></span>
-<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co">#&gt;   [3,] 6.315636 73.40745</span></span>
-<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt;   [4,] 6.606759 81.49450</span></span>
-<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#&gt;   [5,] 6.355270 72.46983</span></span>
-<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#&gt;   [6,] 6.490773 78.61711</span></span>
-<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#&gt;   [7,] 6.375798 76.89579</span></span>
-<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#&gt;   [8,] 6.415435 77.91821</span></span>
-<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#&gt;   [9,] 6.395333 75.79797</span></span>
-<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#&gt;  [10,] 6.452104 75.77422</span></span>
-<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a><span class="co">#&gt;  [11,] 6.354902 73.64769</span></span>
-<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a><span class="co">#&gt;  [12,] 6.253890 72.46448</span></span>
-<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a><span class="co">#&gt;  [13,] 6.432755 76.48557</span></span>
-<span id="cb2-28"><a href="#cb2-28" tabindex="-1"></a><span class="co">#&gt;  [14,] 6.239816 72.73521</span></span>
-<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a><span class="co">#&gt;  [15,] 6.392421 72.35687</span></span>
-<span id="cb2-30"><a href="#cb2-30" tabindex="-1"></a><span class="co">#&gt;  [16,] 6.438676 75.82950</span></span>
-<span id="cb2-31"><a href="#cb2-31" tabindex="-1"></a><span class="co">#&gt;  [17,] 6.407854 76.57698</span></span>
-<span id="cb2-32"><a href="#cb2-32" tabindex="-1"></a><span class="co">#&gt;  [18,] 6.418602 74.41747</span></span>
-<span id="cb2-33"><a href="#cb2-33" tabindex="-1"></a><span class="co">#&gt;  [19,] 6.416149 78.11960</span></span>
-<span id="cb2-34"><a href="#cb2-34" tabindex="-1"></a><span class="co">#&gt;  [20,] 6.398709 76.94679</span></span>
-<span id="cb2-35"><a href="#cb2-35" tabindex="-1"></a><span class="co">#&gt;  [21,] 6.409231 78.06683</span></span>
-<span id="cb2-36"><a href="#cb2-36" tabindex="-1"></a><span class="co">#&gt;  [22,] 6.414848 73.83375</span></span>
-<span id="cb2-37"><a href="#cb2-37" tabindex="-1"></a><span class="co">#&gt;  [23,] 6.596570 80.87162</span></span>
-<span id="cb2-38"><a href="#cb2-38" tabindex="-1"></a><span class="co">#&gt;  [24,] 6.445099 78.07890</span></span>
-<span id="cb2-39"><a href="#cb2-39" tabindex="-1"></a><span class="co">#&gt;  [25,] 6.566444 78.84445</span></span>
-<span id="cb2-40"><a href="#cb2-40" tabindex="-1"></a><span class="co">#&gt;  [26,] 6.316287 74.66422</span></span>
-<span id="cb2-41"><a href="#cb2-41" tabindex="-1"></a><span class="co">#&gt;  [27,] 6.393557 76.88738</span></span>
-<span id="cb2-42"><a href="#cb2-42" tabindex="-1"></a><span class="co">#&gt;  [28,] 6.458692 75.04789</span></span>
-<span id="cb2-43"><a href="#cb2-43" tabindex="-1"></a><span class="co">#&gt;  [29,] 6.379901 76.13779</span></span>
-<span id="cb2-44"><a href="#cb2-44" tabindex="-1"></a><span class="co">#&gt;  [30,] 6.257576 71.96651</span></span>
-<span id="cb2-45"><a href="#cb2-45" tabindex="-1"></a><span class="co">#&gt;  [31,] 6.422571 75.72082</span></span>
-<span id="cb2-46"><a href="#cb2-46" tabindex="-1"></a><span class="co">#&gt;  [32,] 6.464795 76.89847</span></span>
-<span id="cb2-47"><a href="#cb2-47" tabindex="-1"></a><span class="co">#&gt;  [33,] 6.286777 73.34994</span></span>
-<span id="cb2-48"><a href="#cb2-48" tabindex="-1"></a><span class="co">#&gt;  [34,] 6.471574 77.19526</span></span>
-<span id="cb2-49"><a href="#cb2-49" tabindex="-1"></a><span class="co">#&gt;  [35,] 6.449847 76.42107</span></span>
-<span id="cb2-50"><a href="#cb2-50" tabindex="-1"></a><span class="co">#&gt;  [36,] 6.371707 74.37569</span></span>
-<span id="cb2-51"><a href="#cb2-51" tabindex="-1"></a><span class="co">#&gt;  [37,] 6.357429 74.21841</span></span>
-<span id="cb2-52"><a href="#cb2-52" tabindex="-1"></a><span class="co">#&gt;  [38,] 6.357334 74.64551</span></span>
-<span id="cb2-53"><a href="#cb2-53" tabindex="-1"></a><span class="co">#&gt;  [39,] 6.531732 77.41515</span></span>
-<span id="cb2-54"><a href="#cb2-54" tabindex="-1"></a><span class="co">#&gt;  [40,] 6.372838 75.80516</span></span>
-<span id="cb2-55"><a href="#cb2-55" tabindex="-1"></a><span class="co">#&gt;  [41,] 6.640540 81.91559</span></span>
-<span id="cb2-56"><a href="#cb2-56" tabindex="-1"></a><span class="co">#&gt;  [42,] 6.427200 77.41146</span></span>
-<span id="cb2-57"><a href="#cb2-57" tabindex="-1"></a><span class="co">#&gt;  [43,] 6.243263 73.29175</span></span>
-<span id="cb2-58"><a href="#cb2-58" tabindex="-1"></a><span class="co">#&gt;  [44,] 6.580359 78.40103</span></span>
-<span id="cb2-59"><a href="#cb2-59" tabindex="-1"></a><span class="co">#&gt;  [45,] 6.359400 73.67905</span></span>
-<span id="cb2-60"><a href="#cb2-60" tabindex="-1"></a><span class="co">#&gt;  [46,] 6.546413 78.07210</span></span>
-<span id="cb2-61"><a href="#cb2-61" tabindex="-1"></a><span class="co">#&gt;  [47,] 6.494002 77.34733</span></span>
-<span id="cb2-62"><a href="#cb2-62" tabindex="-1"></a><span class="co">#&gt;  [48,] 6.368514 74.86933</span></span>
-<span id="cb2-63"><a href="#cb2-63" tabindex="-1"></a><span class="co">#&gt;  [49,] 6.431841 75.52364</span></span>
-<span id="cb2-64"><a href="#cb2-64" tabindex="-1"></a><span class="co">#&gt;  [50,] 6.451744 76.90597</span></span>
-<span id="cb2-65"><a href="#cb2-65" tabindex="-1"></a><span class="co">#&gt;  [51,] 6.453025 77.24754</span></span>
-<span id="cb2-66"><a href="#cb2-66" tabindex="-1"></a><span class="co">#&gt;  [52,] 6.484998 78.84887</span></span>
-<span id="cb2-67"><a href="#cb2-67" tabindex="-1"></a><span class="co">#&gt;  [53,] 6.444248 76.11355</span></span>
-<span id="cb2-68"><a href="#cb2-68" tabindex="-1"></a><span class="co">#&gt;  [54,] 6.416209 75.24676</span></span>
-<span id="cb2-69"><a href="#cb2-69" tabindex="-1"></a><span class="co">#&gt;  [55,] 6.458626 76.53895</span></span>
-<span id="cb2-70"><a href="#cb2-70" tabindex="-1"></a><span class="co">#&gt;  [56,] 6.304262 72.37091</span></span>
-<span id="cb2-71"><a href="#cb2-71" tabindex="-1"></a><span class="co">#&gt;  [57,] 6.390457 75.06245</span></span>
-<span id="cb2-72"><a href="#cb2-72" tabindex="-1"></a><span class="co">#&gt;  [58,] 6.369015 75.27856</span></span>
-<span id="cb2-73"><a href="#cb2-73" tabindex="-1"></a><span class="co">#&gt;  [59,] 6.411905 76.62328</span></span>
-<span id="cb2-74"><a href="#cb2-74" tabindex="-1"></a><span class="co">#&gt;  [60,] 6.335236 72.76626</span></span>
-<span id="cb2-75"><a href="#cb2-75" tabindex="-1"></a><span class="co">#&gt;  [61,] 6.449384 76.19105</span></span>
-<span id="cb2-76"><a href="#cb2-76" tabindex="-1"></a><span class="co">#&gt;  [62,] 6.350371 74.00297</span></span>
-<span id="cb2-77"><a href="#cb2-77" tabindex="-1"></a><span class="co">#&gt;  [63,] 6.389128 75.40213</span></span>
-<span id="cb2-78"><a href="#cb2-78" tabindex="-1"></a><span class="co">#&gt;  [64,] 6.509621 78.61138</span></span>
-<span id="cb2-79"><a href="#cb2-79" tabindex="-1"></a><span class="co">#&gt;  [65,] 6.498540 77.34006</span></span>
-<span id="cb2-80"><a href="#cb2-80" tabindex="-1"></a><span class="co">#&gt;  [66,] 6.297257 74.08351</span></span>
-<span id="cb2-81"><a href="#cb2-81" tabindex="-1"></a><span class="co">#&gt;  [67,] 6.304905 73.09759</span></span>
-<span id="cb2-82"><a href="#cb2-82" tabindex="-1"></a><span class="co">#&gt;  [68,] 6.650319 82.14755</span></span>
-<span id="cb2-83"><a href="#cb2-83" tabindex="-1"></a><span class="co">#&gt;  [69,] 6.259182 72.65697</span></span>
-<span id="cb2-84"><a href="#cb2-84" tabindex="-1"></a><span class="co">#&gt;  [70,] 6.620325 80.46960</span></span>
-<span id="cb2-85"><a href="#cb2-85" tabindex="-1"></a><span class="co">#&gt;  [71,] 6.444258 77.05716</span></span>
-<span id="cb2-86"><a href="#cb2-86" tabindex="-1"></a><span class="co">#&gt;  [72,] 6.618748 80.11028</span></span>
-<span id="cb2-87"><a href="#cb2-87" tabindex="-1"></a><span class="co">#&gt;  [73,] 6.430931 77.26469</span></span>
-<span id="cb2-88"><a href="#cb2-88" tabindex="-1"></a><span class="co">#&gt;  [74,] 6.651050 82.28822</span></span>
-<span id="cb2-89"><a href="#cb2-89" tabindex="-1"></a><span class="co">#&gt;  [75,] 6.398579 76.10857</span></span>
-<span id="cb2-90"><a href="#cb2-90" tabindex="-1"></a><span class="co">#&gt;  [76,] 6.531708 76.63966</span></span>
-<span id="cb2-91"><a href="#cb2-91" tabindex="-1"></a><span class="co">#&gt;  [77,] 6.470498 76.55241</span></span>
-<span id="cb2-92"><a href="#cb2-92" tabindex="-1"></a><span class="co">#&gt;  [78,] 6.501117 78.43636</span></span>
-<span id="cb2-93"><a href="#cb2-93" tabindex="-1"></a><span class="co">#&gt;  [79,] 6.485008 77.65040</span></span>
-<span id="cb2-94"><a href="#cb2-94" tabindex="-1"></a><span class="co">#&gt;  [80,] 6.485931 77.24606</span></span>
-<span id="cb2-95"><a href="#cb2-95" tabindex="-1"></a><span class="co">#&gt;  [81,] 6.415493 75.51380</span></span>
-<span id="cb2-96"><a href="#cb2-96" tabindex="-1"></a><span class="co">#&gt;  [82,] 6.443932 74.05108</span></span>
-<span id="cb2-97"><a href="#cb2-97" tabindex="-1"></a><span class="co">#&gt;  [83,] 6.325003 73.76095</span></span>
-<span id="cb2-98"><a href="#cb2-98" tabindex="-1"></a><span class="co">#&gt;  [84,] 6.323352 74.28236</span></span>
-<span id="cb2-99"><a href="#cb2-99" tabindex="-1"></a><span class="co">#&gt;  [85,] 6.537225 78.46154</span></span>
-<span id="cb2-100"><a href="#cb2-100" tabindex="-1"></a><span class="co">#&gt;  [86,] 6.425373 77.41009</span></span>
-<span id="cb2-101"><a href="#cb2-101" tabindex="-1"></a><span class="co">#&gt;  [87,] 6.631429 81.96381</span></span>
-<span id="cb2-102"><a href="#cb2-102" tabindex="-1"></a><span class="co">#&gt;  [88,] 6.380613 75.35240</span></span>
-<span id="cb2-103"><a href="#cb2-103" tabindex="-1"></a><span class="co">#&gt;  [89,] 6.483115 77.88982</span></span>
-<span id="cb2-104"><a href="#cb2-104" tabindex="-1"></a><span class="co">#&gt;  [90,] 6.338270 74.75712</span></span>
-<span id="cb2-105"><a href="#cb2-105" tabindex="-1"></a><span class="co">#&gt;  [91,] 6.560837 76.39026</span></span>
-<span id="cb2-106"><a href="#cb2-106" tabindex="-1"></a><span class="co">#&gt;  [92,] 6.553474 80.97582</span></span>
-<span id="cb2-107"><a href="#cb2-107" tabindex="-1"></a><span class="co">#&gt;  [93,] 6.393651 74.96486</span></span>
-<span id="cb2-108"><a href="#cb2-108" tabindex="-1"></a><span class="co">#&gt;  [94,] 6.500069 77.84719</span></span>
-<span id="cb2-109"><a href="#cb2-109" tabindex="-1"></a><span class="co">#&gt;  [95,] 6.469865 77.91693</span></span>
-<span id="cb2-110"><a href="#cb2-110" tabindex="-1"></a><span class="co">#&gt;  [96,] 6.341839 75.80376</span></span>
-<span id="cb2-111"><a href="#cb2-111" tabindex="-1"></a><span class="co">#&gt;  [97,] 6.459499 78.36327</span></span>
-<span id="cb2-112"><a href="#cb2-112" tabindex="-1"></a><span class="co">#&gt;  [98,] 6.358715 73.68685</span></span>
-<span id="cb2-113"><a href="#cb2-113" tabindex="-1"></a><span class="co">#&gt;  [99,] 6.322227 72.95035</span></span>
-<span id="cb2-114"><a href="#cb2-114" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;bootstrap_draws&quot;)attr(,&quot;requested_B&quot;)</span></span>
-<span id="cb2-115"><a href="#cb2-115" tabindex="-1"></a><span class="co">#&gt; [1] 99</span></span>
-<span id="cb2-116"><a href="#cb2-116" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;bootstrap_draws&quot;)attr(,&quot;successful_B&quot;)</span></span>
-<span id="cb2-117"><a href="#cb2-117" tabindex="-1"></a><span class="co">#&gt; [1] 99</span></span>
-<span id="cb2-118"><a href="#cb2-118" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;bootstrap_draws&quot;)attr(,&quot;bootstrap_type&quot;)</span></span>
-<span id="cb2-119"><a href="#cb2-119" tabindex="-1"></a><span class="co">#&gt; [1] &quot;wild&quot;</span></span>
-<span id="cb2-120"><a href="#cb2-120" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;bootstrap_draws&quot;)attr(,&quot;wild_weights&quot;)</span></span>
-<span id="cb2-121"><a href="#cb2-121" tabindex="-1"></a><span class="co">#&gt; [1] &quot;mammen&quot;</span></span>
-<span id="cb2-122"><a href="#cb2-122" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;bootstrap_draws&quot;)attr(,&quot;se_draws&quot;)</span></span>
-<span id="cb2-123"><a href="#cb2-123" tabindex="-1"></a><span class="co">#&gt;              Vmax       Km</span></span>
-<span id="cb2-124"><a href="#cb2-124" tabindex="-1"></a><span class="co">#&gt;   [1,] 0.06985208 1.935124</span></span>
-<span id="cb2-125"><a href="#cb2-125" tabindex="-1"></a><span class="co">#&gt;   [2,] 0.10246839 2.721211</span></span>
-<span id="cb2-126"><a href="#cb2-126" tabindex="-1"></a><span class="co">#&gt;   [3,] 0.06735485 1.783951</span></span>
-<span id="cb2-127"><a href="#cb2-127" tabindex="-1"></a><span class="co">#&gt;   [4,] 0.08946312 2.471365</span></span>
-<span id="cb2-128"><a href="#cb2-128" tabindex="-1"></a><span class="co">#&gt;   [5,] 0.08391186 2.185031</span></span>
-<span id="cb2-129"><a href="#cb2-129" tabindex="-1"></a><span class="co">#&gt;   [6,] 0.08787750 2.398055</span></span>
-<span id="cb2-130"><a href="#cb2-130" tabindex="-1"></a><span class="co">#&gt;   [7,] 0.08215916 2.240689</span></span>
-<span id="cb2-131"><a href="#cb2-131" tabindex="-1"></a><span class="co">#&gt;   [8,] 0.08112749 2.223237</span></span>
-<span id="cb2-132"><a href="#cb2-132" tabindex="-1"></a><span class="co">#&gt;   [9,] 0.06964822 1.871104</span></span>
-<span id="cb2-133"><a href="#cb2-133" tabindex="-1"></a><span class="co">#&gt;  [10,] 0.06270605 1.669348</span></span>
-<span id="cb2-134"><a href="#cb2-134" tabindex="-1"></a><span class="co">#&gt;  [11,] 0.09723531 2.566446</span></span>
-<span id="cb2-135"><a href="#cb2-135" tabindex="-1"></a><span class="co">#&gt;  [12,] 0.07315613 1.935708</span></span>
-<span id="cb2-136"><a href="#cb2-136" tabindex="-1"></a><span class="co">#&gt;  [13,] 0.06387095 1.718819</span></span>
-<span id="cb2-137"><a href="#cb2-137" tabindex="-1"></a><span class="co">#&gt;  [14,] 0.06907691 1.837610</span></span>
-<span id="cb2-138"><a href="#cb2-138" tabindex="-1"></a><span class="co">#&gt;  [15,] 0.08942662 2.312088</span></span>
-<span id="cb2-139"><a href="#cb2-139" tabindex="-1"></a><span class="co">#&gt;  [16,] 0.06834826 1.824457</span></span>
-<span id="cb2-140"><a href="#cb2-140" tabindex="-1"></a><span class="co">#&gt;  [17,] 0.06262306 1.693470</span></span>
-<span id="cb2-141"><a href="#cb2-141" tabindex="-1"></a><span class="co">#&gt;  [18,] 0.09244142 2.436773</span></span>
-<span id="cb2-142"><a href="#cb2-142" tabindex="-1"></a><span class="co">#&gt;  [19,] 0.09928960 2.726513</span></span>
-<span id="cb2-143"><a href="#cb2-143" tabindex="-1"></a><span class="co">#&gt;  [20,] 0.07677103 2.087400</span></span>
-<span id="cb2-144"><a href="#cb2-144" tabindex="-1"></a><span class="co">#&gt;  [21,] 0.07698530 2.115122</span></span>
-<span id="cb2-145"><a href="#cb2-145" tabindex="-1"></a><span class="co">#&gt;  [22,] 0.09008626 2.360508</span></span>
-<span id="cb2-146"><a href="#cb2-146" tabindex="-1"></a><span class="co">#&gt;  [23,] 0.08547042 2.349661</span></span>
-<span id="cb2-147"><a href="#cb2-147" tabindex="-1"></a><span class="co">#&gt;  [24,] 0.07809181 2.133862</span></span>
-<span id="cb2-148"><a href="#cb2-148" tabindex="-1"></a><span class="co">#&gt;  [25,] 0.07836180 2.118843</span></span>
-<span id="cb2-149"><a href="#cb2-149" tabindex="-1"></a><span class="co">#&gt;  [26,] 0.07504769 2.015870</span></span>
-<span id="cb2-150"><a href="#cb2-150" tabindex="-1"></a><span class="co">#&gt;  [27,] 0.06357009 1.728746</span></span>
-<span id="cb2-151"><a href="#cb2-151" tabindex="-1"></a><span class="co">#&gt;  [28,] 0.11550177 3.047138</span></span>
-<span id="cb2-152"><a href="#cb2-152" tabindex="-1"></a><span class="co">#&gt;  [29,] 0.07788269 2.105225</span></span>
-<span id="cb2-153"><a href="#cb2-153" tabindex="-1"></a><span class="co">#&gt;  [30,] 0.09938417 2.613052</span></span>
-<span id="cb2-154"><a href="#cb2-154" tabindex="-1"></a><span class="co">#&gt;  [31,] 0.05738243 1.533743</span></span>
-<span id="cb2-155"><a href="#cb2-155" tabindex="-1"></a><span class="co">#&gt;  [32,] 0.08069294 2.170478</span></span>
-<span id="cb2-156"><a href="#cb2-156" tabindex="-1"></a><span class="co">#&gt;  [33,] 0.06924554 1.841238</span></span>
-<span id="cb2-157"><a href="#cb2-157" tabindex="-1"></a><span class="co">#&gt;  [34,] 0.12740395 3.434337</span></span>
-<span id="cb2-158"><a href="#cb2-158" tabindex="-1"></a><span class="co">#&gt;  [35,] 0.07649214 2.051568</span></span>
-<span id="cb2-159"><a href="#cb2-159" tabindex="-1"></a><span class="co">#&gt;  [36,] 0.06966066 1.848912</span></span>
-<span id="cb2-160"><a href="#cb2-160" tabindex="-1"></a><span class="co">#&gt;  [37,] 0.07615177 2.022158</span></span>
-<span id="cb2-161"><a href="#cb2-161" tabindex="-1"></a><span class="co">#&gt;  [38,] 0.06883002 1.836538</span></span>
-<span id="cb2-162"><a href="#cb2-162" tabindex="-1"></a><span class="co">#&gt;  [39,] 0.11082711 2.967009</span></span>
-<span id="cb2-163"><a href="#cb2-163" tabindex="-1"></a><span class="co">#&gt;  [40,] 0.06943604 1.872134</span></span>
-<span id="cb2-164"><a href="#cb2-164" tabindex="-1"></a><span class="co">#&gt;  [41,] 0.08286175 2.287154</span></span>
-<span id="cb2-165"><a href="#cb2-165" tabindex="-1"></a><span class="co">#&gt;  [42,] 0.06895697 1.876023</span></span>
-<span id="cb2-166"><a href="#cb2-166" tabindex="-1"></a><span class="co">#&gt;  [43,] 0.08397688 2.247013</span></span>
-<span id="cb2-167"><a href="#cb2-167" tabindex="-1"></a><span class="co">#&gt;  [44,] 0.11008318 2.956345</span></span>
-<span id="cb2-168"><a href="#cb2-168" tabindex="-1"></a><span class="co">#&gt;  [45,] 0.10509946 2.773038</span></span>
-<span id="cb2-169"><a href="#cb2-169" tabindex="-1"></a><span class="co">#&gt;  [46,] 0.11417859 3.071443</span></span>
-<span id="cb2-170"><a href="#cb2-170" tabindex="-1"></a><span class="co">#&gt;  [47,] 0.06588085 1.772678</span></span>
-<span id="cb2-171"><a href="#cb2-171" tabindex="-1"></a><span class="co">#&gt;  [48,] 0.07496306 2.001667</span></span>
-<span id="cb2-172"><a href="#cb2-172" tabindex="-1"></a><span class="co">#&gt;  [49,] 0.05970155 1.589968</span></span>
-<span id="cb2-173"><a href="#cb2-173" tabindex="-1"></a><span class="co">#&gt;  [50,] 0.10320772 2.781921</span></span>
-<span id="cb2-174"><a href="#cb2-174" tabindex="-1"></a><span class="co">#&gt;  [51,] 0.06368762 1.722687</span></span>
-<span id="cb2-175"><a href="#cb2-175" tabindex="-1"></a><span class="co">#&gt;  [52,] 0.06434465 1.761755</span></span>
-<span id="cb2-176"><a href="#cb2-176" tabindex="-1"></a><span class="co">#&gt;  [53,] 0.06786972 1.815773</span></span>
-<span id="cb2-177"><a href="#cb2-177" tabindex="-1"></a><span class="co">#&gt;  [54,] 0.10341771 2.752472</span></span>
-<span id="cb2-178"><a href="#cb2-178" tabindex="-1"></a><span class="co">#&gt;  [55,] 0.07591162 2.035847</span></span>
-<span id="cb2-179"><a href="#cb2-179" tabindex="-1"></a><span class="co">#&gt;  [56,] 0.10580533 2.774245</span></span>
-<span id="cb2-180"><a href="#cb2-180" tabindex="-1"></a><span class="co">#&gt;  [57,] 0.08402381 2.240719</span></span>
-<span id="cb2-181"><a href="#cb2-181" tabindex="-1"></a><span class="co">#&gt;  [58,] 0.07026170 1.884538</span></span>
-<span id="cb2-182"><a href="#cb2-182" tabindex="-1"></a><span class="co">#&gt;  [59,] 0.08045964 2.175535</span></span>
-<span id="cb2-183"><a href="#cb2-183" tabindex="-1"></a><span class="co">#&gt;  [60,] 0.09580167 2.511072</span></span>
-<span id="cb2-184"><a href="#cb2-184" tabindex="-1"></a><span class="co">#&gt;  [61,] 0.09470489 2.533849</span></span>
-<span id="cb2-185"><a href="#cb2-185" tabindex="-1"></a><span class="co">#&gt;  [62,] 0.10681429 2.832647</span></span>
-<span id="cb2-186"><a href="#cb2-186" tabindex="-1"></a><span class="co">#&gt;  [63,] 0.06495163 1.739009</span></span>
-<span id="cb2-187"><a href="#cb2-187" tabindex="-1"></a><span class="co">#&gt;  [64,] 0.08706395 2.368834</span></span>
-<span id="cb2-188"><a href="#cb2-188" tabindex="-1"></a><span class="co">#&gt;  [65,] 0.09176504 2.467235</span></span>
-<span id="cb2-189"><a href="#cb2-189" tabindex="-1"></a><span class="co">#&gt;  [66,] 0.08347602 2.234426</span></span>
-<span id="cb2-190"><a href="#cb2-190" tabindex="-1"></a><span class="co">#&gt;  [67,] 0.10286184 2.719394</span></span>
-<span id="cb2-191"><a href="#cb2-191" tabindex="-1"></a><span class="co">#&gt;  [68,] 0.09143797 2.526102</span></span>
-<span id="cb2-192"><a href="#cb2-192" tabindex="-1"></a><span class="co">#&gt;  [69,] 0.06791179 1.799408</span></span>
-<span id="cb2-193"><a href="#cb2-193" tabindex="-1"></a><span class="co">#&gt;  [70,] 0.08130941 2.218032</span></span>
-<span id="cb2-194"><a href="#cb2-194" tabindex="-1"></a><span class="co">#&gt;  [71,] 0.06825023 1.844812</span></span>
-<span id="cb2-195"><a href="#cb2-195" tabindex="-1"></a><span class="co">#&gt;  [72,] 0.11440296 3.109920</span></span>
-<span id="cb2-196"><a href="#cb2-196" tabindex="-1"></a><span class="co">#&gt;  [73,] 0.06073428 1.648749</span></span>
-<span id="cb2-197"><a href="#cb2-197" tabindex="-1"></a><span class="co">#&gt;  [74,] 0.07796900 2.156834</span></span>
-<span id="cb2-198"><a href="#cb2-198" tabindex="-1"></a><span class="co">#&gt;  [75,] 0.07508047 2.022909</span></span>
-<span id="cb2-199"><a href="#cb2-199" tabindex="-1"></a><span class="co">#&gt;  [76,] 0.10677764 2.834709</span></span>
-<span id="cb2-200"><a href="#cb2-200" tabindex="-1"></a><span class="co">#&gt;  [77,] 0.09604369 2.571415</span></span>
-<span id="cb2-201"><a href="#cb2-201" tabindex="-1"></a><span class="co">#&gt;  [78,] 0.08721350 2.371596</span></span>
-<span id="cb2-202"><a href="#cb2-202" tabindex="-1"></a><span class="co">#&gt;  [79,] 0.06570885 1.776283</span></span>
-<span id="cb2-203"><a href="#cb2-203" tabindex="-1"></a><span class="co">#&gt;  [80,] 0.05785708 1.557014</span></span>
-<span id="cb2-204"><a href="#cb2-204" tabindex="-1"></a><span class="co">#&gt;  [81,] 0.06421274 1.714279</span></span>
-<span id="cb2-205"><a href="#cb2-205" tabindex="-1"></a><span class="co">#&gt;  [82,] 0.09237578 2.415500</span></span>
-<span id="cb2-206"><a href="#cb2-206" tabindex="-1"></a><span class="co">#&gt;  [83,] 0.07133711 1.894212</span></span>
-<span id="cb2-207"><a href="#cb2-207" tabindex="-1"></a><span class="co">#&gt;  [84,] 0.09829563 2.626123</span></span>
-<span id="cb2-208"><a href="#cb2-208" tabindex="-1"></a><span class="co">#&gt;  [85,] 0.09614009 2.600597</span></span>
-<span id="cb2-209"><a href="#cb2-209" tabindex="-1"></a><span class="co">#&gt;  [86,] 0.06440193 1.752572</span></span>
-<span id="cb2-210"><a href="#cb2-210" tabindex="-1"></a><span class="co">#&gt;  [87,] 0.09357089 2.587562</span></span>
-<span id="cb2-211"><a href="#cb2-211" tabindex="-1"></a><span class="co">#&gt;  [88,] 0.07474818 2.002868</span></span>
-<span id="cb2-212"><a href="#cb2-212" tabindex="-1"></a><span class="co">#&gt;  [89,] 0.06268655 1.699433</span></span>
-<span id="cb2-213"><a href="#cb2-213" tabindex="-1"></a><span class="co">#&gt;  [90,] 0.10975734 2.941041</span></span>
-<span id="cb2-214"><a href="#cb2-214" tabindex="-1"></a><span class="co">#&gt;  [91,] 0.10045591 2.647836</span></span>
-<span id="cb2-215"><a href="#cb2-215" tabindex="-1"></a><span class="co">#&gt;  [92,] 0.07292105 2.020010</span></span>
-<span id="cb2-216"><a href="#cb2-216" tabindex="-1"></a><span class="co">#&gt;  [93,] 0.09533099 2.538228</span></span>
-<span id="cb2-217"><a href="#cb2-217" tabindex="-1"></a><span class="co">#&gt;  [94,] 0.05871973 1.587018</span></span>
-<span id="cb2-218"><a href="#cb2-218" tabindex="-1"></a><span class="co">#&gt;  [95,] 0.06068649 1.649058</span></span>
-<span id="cb2-219"><a href="#cb2-219" tabindex="-1"></a><span class="co">#&gt;  [96,] 0.07445737 2.017298</span></span>
-<span id="cb2-220"><a href="#cb2-220" tabindex="-1"></a><span class="co">#&gt;  [97,] 0.07664515 2.096006</span></span>
-<span id="cb2-221"><a href="#cb2-221" tabindex="-1"></a><span class="co">#&gt;  [98,] 0.09689460 2.557056</span></span>
-<span id="cb2-222"><a href="#cb2-222" tabindex="-1"></a><span class="co">#&gt;  [99,] 0.09746000 2.565203</span></span>
-<span id="cb2-223"><a href="#cb2-223" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;bootstrap_draws&quot;)attr(,&quot;bootstrap_ci&quot;)</span></span>
-<span id="cb2-224"><a href="#cb2-224" tabindex="-1"></a><span class="co">#&gt; [1] &quot;studentized&quot;</span></span>
-<span id="cb2-225"><a href="#cb2-225" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">predict</span>(fit, <span class="at">newdata =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">80</span>, <span class="at">length.out =</span> <span class="dv">6</span>), <span class="at">interval =</span> <span class="st">&quot;prediction&quot;</span>))</span>
-<span id="cb2-226"><a href="#cb2-226" tabindex="-1"></a><span class="co">#&gt;    x      fit     se.fit working_variance           lwr          upr</span></span>
-<span id="cb2-227"><a href="#cb2-227" tabindex="-1"></a><span class="co">#&gt; 1  0 0.000000 0.00000000     1.203550e-11 -6.799549e-06 6.799549e-06</span></span>
-<span id="cb2-228"><a href="#cb2-228" tabindex="-1"></a><span class="co">#&gt; 2 16 1.113395 0.01709891     4.814198e-03  9.733357e-01 1.253455e+00</span></span>
-<span id="cb2-229"><a href="#cb2-229" tabindex="-1"></a><span class="co">#&gt; 3 32 1.898201 0.02294258     6.808304e-03  1.730345e+00 2.066058e+00</span></span>
-<span id="cb2-230"><a href="#cb2-230" tabindex="-1"></a><span class="co">#&gt; 4 48 2.481175 0.02455237     8.338436e-03  2.295844e+00 2.666505e+00</span></span>
-<span id="cb2-231"><a href="#cb2-231" tabindex="-1"></a><span class="co">#&gt; 5 64 2.931304 0.02479206     9.628397e-03  2.732941e+00 3.129668e+00</span></span>
-<span id="cb2-232"><a href="#cb2-232" tabindex="-1"></a><span class="co">#&gt; 6 80 3.289353 0.02489137     1.076487e-02  3.080229e+00 3.498477e+00</span></span></code></pre></div>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="fu">confint</span>(fit, <span class="at">method =</span> <span class="st">&quot;bootstrap&quot;</span>, <span class="at">B =</span> <span class="dv">99</span>, <span class="at">seed =</span> <span class="dv">1</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt;          lower    upper</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; Vmax  6.224301  6.63876</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; Km   71.079881 80.97992</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;bootstrap_draws&quot;)</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt;            Vmax       Km</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt;   [1,] 6.476014 79.83447</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt;   [2,] 6.378489 74.52054</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt;   [3,] 6.315636 73.40745</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co">#&gt;   [4,] 6.606759 81.49450</span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt;   [5,] 6.355270 72.46983</span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#&gt;   [6,] 6.490773 78.61711</span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#&gt;   [7,] 6.375798 76.89579</span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#&gt;   [8,] 6.415435 77.91821</span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#&gt;   [9,] 6.395333 75.79797</span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#&gt;  [10,] 6.452104 75.77422</span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#&gt;  [11,] 6.354902 73.64769</span></span>
+<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a><span class="co">#&gt;  [12,] 6.253890 72.46448</span></span>
+<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a><span class="co">#&gt;  [13,] 6.432755 76.48557</span></span>
+<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a><span class="co">#&gt;  [14,] 6.239816 72.73521</span></span>
+<span id="cb2-28"><a href="#cb2-28" tabindex="-1"></a><span class="co">#&gt;  [15,] 6.392421 72.35687</span></span>
+<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a><span class="co">#&gt;  [16,] 6.438676 75.82950</span></span>
+<span id="cb2-30"><a href="#cb2-30" tabindex="-1"></a><span class="co">#&gt;  [17,] 6.407854 76.57698</span></span>
+<span id="cb2-31"><a href="#cb2-31" tabindex="-1"></a><span class="co">#&gt;  [18,] 6.418602 74.41747</span></span>
+<span id="cb2-32"><a href="#cb2-32" tabindex="-1"></a><span class="co">#&gt;  [19,] 6.416149 78.11960</span></span>
+<span id="cb2-33"><a href="#cb2-33" tabindex="-1"></a><span class="co">#&gt;  [20,] 6.398709 76.94679</span></span>
+<span id="cb2-34"><a href="#cb2-34" tabindex="-1"></a><span class="co">#&gt;  [21,] 6.409231 78.06683</span></span>
+<span id="cb2-35"><a href="#cb2-35" tabindex="-1"></a><span class="co">#&gt;  [22,] 6.414848 73.83375</span></span>
+<span id="cb2-36"><a href="#cb2-36" tabindex="-1"></a><span class="co">#&gt;  [23,] 6.596570 80.87162</span></span>
+<span id="cb2-37"><a href="#cb2-37" tabindex="-1"></a><span class="co">#&gt;  [24,] 6.445099 78.07890</span></span>
+<span id="cb2-38"><a href="#cb2-38" tabindex="-1"></a><span class="co">#&gt;  [25,] 6.566444 78.84445</span></span>
+<span id="cb2-39"><a href="#cb2-39" tabindex="-1"></a><span class="co">#&gt;  [26,] 6.316287 74.66422</span></span>
+<span id="cb2-40"><a href="#cb2-40" tabindex="-1"></a><span class="co">#&gt;  [27,] 6.393557 76.88738</span></span>
+<span id="cb2-41"><a href="#cb2-41" tabindex="-1"></a><span class="co">#&gt;  [28,] 6.458692 75.04789</span></span>
+<span id="cb2-42"><a href="#cb2-42" tabindex="-1"></a><span class="co">#&gt;  [29,] 6.379901 76.13779</span></span>
+<span id="cb2-43"><a href="#cb2-43" tabindex="-1"></a><span class="co">#&gt;  [30,] 6.257576 71.96651</span></span>
+<span id="cb2-44"><a href="#cb2-44" tabindex="-1"></a><span class="co">#&gt;  [31,] 6.422571 75.72082</span></span>
+<span id="cb2-45"><a href="#cb2-45" tabindex="-1"></a><span class="co">#&gt;  [32,] 6.464795 76.89847</span></span>
+<span id="cb2-46"><a href="#cb2-46" tabindex="-1"></a><span class="co">#&gt;  [33,] 6.286777 73.34994</span></span>
+<span id="cb2-47"><a href="#cb2-47" tabindex="-1"></a><span class="co">#&gt;  [34,] 6.471574 77.19526</span></span>
+<span id="cb2-48"><a href="#cb2-48" tabindex="-1"></a><span class="co">#&gt;  [35,] 6.449847 76.42107</span></span>
+<span id="cb2-49"><a href="#cb2-49" tabindex="-1"></a><span class="co">#&gt;  [36,] 6.371707 74.37569</span></span>
+<span id="cb2-50"><a href="#cb2-50" tabindex="-1"></a><span class="co">#&gt;  [37,] 6.357429 74.21841</span></span>
+<span id="cb2-51"><a href="#cb2-51" tabindex="-1"></a><span class="co">#&gt;  [38,] 6.357334 74.64551</span></span>
+<span id="cb2-52"><a href="#cb2-52" tabindex="-1"></a><span class="co">#&gt;  [39,] 6.531732 77.41515</span></span>
+<span id="cb2-53"><a href="#cb2-53" tabindex="-1"></a><span class="co">#&gt;  [40,] 6.372838 75.80516</span></span>
+<span id="cb2-54"><a href="#cb2-54" tabindex="-1"></a><span class="co">#&gt;  [41,] 6.640540 81.91559</span></span>
+<span id="cb2-55"><a href="#cb2-55" tabindex="-1"></a><span class="co">#&gt;  [42,] 6.427200 77.41146</span></span>
+<span id="cb2-56"><a href="#cb2-56" tabindex="-1"></a><span class="co">#&gt;  [43,] 6.243263 73.29175</span></span>
+<span id="cb2-57"><a href="#cb2-57" tabindex="-1"></a><span class="co">#&gt;  [44,] 6.580359 78.40103</span></span>
+<span id="cb2-58"><a href="#cb2-58" tabindex="-1"></a><span class="co">#&gt;  [45,] 6.359400 73.67905</span></span>
+<span id="cb2-59"><a href="#cb2-59" tabindex="-1"></a><span class="co">#&gt;  [46,] 6.546413 78.07210</span></span>
+<span id="cb2-60"><a href="#cb2-60" tabindex="-1"></a><span class="co">#&gt;  [47,] 6.494002 77.34733</span></span>
+<span id="cb2-61"><a href="#cb2-61" tabindex="-1"></a><span class="co">#&gt;  [48,] 6.368514 74.86933</span></span>
+<span id="cb2-62"><a href="#cb2-62" tabindex="-1"></a><span class="co">#&gt;  [49,] 6.431841 75.52364</span></span>
+<span id="cb2-63"><a href="#cb2-63" tabindex="-1"></a><span class="co">#&gt;  [50,] 6.451744 76.90597</span></span>
+<span id="cb2-64"><a href="#cb2-64" tabindex="-1"></a><span class="co">#&gt;  [51,] 6.453025 77.24754</span></span>
+<span id="cb2-65"><a href="#cb2-65" tabindex="-1"></a><span class="co">#&gt;  [52,] 6.484998 78.84887</span></span>
+<span id="cb2-66"><a href="#cb2-66" tabindex="-1"></a><span class="co">#&gt;  [53,] 6.444248 76.11355</span></span>
+<span id="cb2-67"><a href="#cb2-67" tabindex="-1"></a><span class="co">#&gt;  [54,] 6.416209 75.24676</span></span>
+<span id="cb2-68"><a href="#cb2-68" tabindex="-1"></a><span class="co">#&gt;  [55,] 6.458626 76.53895</span></span>
+<span id="cb2-69"><a href="#cb2-69" tabindex="-1"></a><span class="co">#&gt;  [56,] 6.304262 72.37091</span></span>
+<span id="cb2-70"><a href="#cb2-70" tabindex="-1"></a><span class="co">#&gt;  [57,] 6.390457 75.06245</span></span>
+<span id="cb2-71"><a href="#cb2-71" tabindex="-1"></a><span class="co">#&gt;  [58,] 6.369015 75.27856</span></span>
+<span id="cb2-72"><a href="#cb2-72" tabindex="-1"></a><span class="co">#&gt;  [59,] 6.411905 76.62328</span></span>
+<span id="cb2-73"><a href="#cb2-73" tabindex="-1"></a><span class="co">#&gt;  [60,] 6.335236 72.76626</span></span>
+<span id="cb2-74"><a href="#cb2-74" tabindex="-1"></a><span class="co">#&gt;  [61,] 6.449384 76.19105</span></span>
+<span id="cb2-75"><a href="#cb2-75" tabindex="-1"></a><span class="co">#&gt;  [62,] 6.350371 74.00297</span></span>
+<span id="cb2-76"><a href="#cb2-76" tabindex="-1"></a><span class="co">#&gt;  [63,] 6.389128 75.40213</span></span>
+<span id="cb2-77"><a href="#cb2-77" tabindex="-1"></a><span class="co">#&gt;  [64,] 6.509621 78.61138</span></span>
+<span id="cb2-78"><a href="#cb2-78" tabindex="-1"></a><span class="co">#&gt;  [65,] 6.498540 77.34006</span></span>
+<span id="cb2-79"><a href="#cb2-79" tabindex="-1"></a><span class="co">#&gt;  [66,] 6.297257 74.08351</span></span>
+<span id="cb2-80"><a href="#cb2-80" tabindex="-1"></a><span class="co">#&gt;  [67,] 6.304905 73.09759</span></span>
+<span id="cb2-81"><a href="#cb2-81" tabindex="-1"></a><span class="co">#&gt;  [68,] 6.650319 82.14755</span></span>
+<span id="cb2-82"><a href="#cb2-82" tabindex="-1"></a><span class="co">#&gt;  [69,] 6.259182 72.65697</span></span>
+<span id="cb2-83"><a href="#cb2-83" tabindex="-1"></a><span class="co">#&gt;  [70,] 6.620325 80.46960</span></span>
+<span id="cb2-84"><a href="#cb2-84" tabindex="-1"></a><span class="co">#&gt;  [71,] 6.444258 77.05716</span></span>
+<span id="cb2-85"><a href="#cb2-85" tabindex="-1"></a><span class="co">#&gt;  [72,] 6.618748 80.11028</span></span>
+<span id="cb2-86"><a href="#cb2-86" tabindex="-1"></a><span class="co">#&gt;  [73,] 6.430931 77.26469</span></span>
+<span id="cb2-87"><a href="#cb2-87" tabindex="-1"></a><span class="co">#&gt;  [74,] 6.651050 82.28822</span></span>
+<span id="cb2-88"><a href="#cb2-88" tabindex="-1"></a><span class="co">#&gt;  [75,] 6.398579 76.10857</span></span>
+<span id="cb2-89"><a href="#cb2-89" tabindex="-1"></a><span class="co">#&gt;  [76,] 6.531708 76.63966</span></span>
+<span id="cb2-90"><a href="#cb2-90" tabindex="-1"></a><span class="co">#&gt;  [77,] 6.470498 76.55241</span></span>
+<span id="cb2-91"><a href="#cb2-91" tabindex="-1"></a><span class="co">#&gt;  [78,] 6.501117 78.43636</span></span>
+<span id="cb2-92"><a href="#cb2-92" tabindex="-1"></a><span class="co">#&gt;  [79,] 6.485008 77.65040</span></span>
+<span id="cb2-93"><a href="#cb2-93" tabindex="-1"></a><span class="co">#&gt;  [80,] 6.485931 77.24606</span></span>
+<span id="cb2-94"><a href="#cb2-94" tabindex="-1"></a><span class="co">#&gt;  [81,] 6.415493 75.51380</span></span>
+<span id="cb2-95"><a href="#cb2-95" tabindex="-1"></a><span class="co">#&gt;  [82,] 6.443932 74.05108</span></span>
+<span id="cb2-96"><a href="#cb2-96" tabindex="-1"></a><span class="co">#&gt;  [83,] 6.325003 73.76095</span></span>
+<span id="cb2-97"><a href="#cb2-97" tabindex="-1"></a><span class="co">#&gt;  [84,] 6.323352 74.28236</span></span>
+<span id="cb2-98"><a href="#cb2-98" tabindex="-1"></a><span class="co">#&gt;  [85,] 6.537225 78.46154</span></span>
+<span id="cb2-99"><a href="#cb2-99" tabindex="-1"></a><span class="co">#&gt;  [86,] 6.425373 77.41009</span></span>
+<span id="cb2-100"><a href="#cb2-100" tabindex="-1"></a><span class="co">#&gt;  [87,] 6.631429 81.96381</span></span>
+<span id="cb2-101"><a href="#cb2-101" tabindex="-1"></a><span class="co">#&gt;  [88,] 6.380613 75.35240</span></span>
+<span id="cb2-102"><a href="#cb2-102" tabindex="-1"></a><span class="co">#&gt;  [89,] 6.483115 77.88982</span></span>
+<span id="cb2-103"><a href="#cb2-103" tabindex="-1"></a><span class="co">#&gt;  [90,] 6.338270 74.75712</span></span>
+<span id="cb2-104"><a href="#cb2-104" tabindex="-1"></a><span class="co">#&gt;  [91,] 6.560837 76.39026</span></span>
+<span id="cb2-105"><a href="#cb2-105" tabindex="-1"></a><span class="co">#&gt;  [92,] 6.553474 80.97582</span></span>
+<span id="cb2-106"><a href="#cb2-106" tabindex="-1"></a><span class="co">#&gt;  [93,] 6.393651 74.96486</span></span>
+<span id="cb2-107"><a href="#cb2-107" tabindex="-1"></a><span class="co">#&gt;  [94,] 6.500069 77.84719</span></span>
+<span id="cb2-108"><a href="#cb2-108" tabindex="-1"></a><span class="co">#&gt;  [95,] 6.469865 77.91693</span></span>
+<span id="cb2-109"><a href="#cb2-109" tabindex="-1"></a><span class="co">#&gt;  [96,] 6.341839 75.80376</span></span>
+<span id="cb2-110"><a href="#cb2-110" tabindex="-1"></a><span class="co">#&gt;  [97,] 6.459499 78.36327</span></span>
+<span id="cb2-111"><a href="#cb2-111" tabindex="-1"></a><span class="co">#&gt;  [98,] 6.358715 73.68685</span></span>
+<span id="cb2-112"><a href="#cb2-112" tabindex="-1"></a><span class="co">#&gt;  [99,] 6.322227 72.95035</span></span>
+<span id="cb2-113"><a href="#cb2-113" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;bootstrap_draws&quot;)attr(,&quot;requested_B&quot;)</span></span>
+<span id="cb2-114"><a href="#cb2-114" tabindex="-1"></a><span class="co">#&gt; [1] 99</span></span>
+<span id="cb2-115"><a href="#cb2-115" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;bootstrap_draws&quot;)attr(,&quot;successful_B&quot;)</span></span>
+<span id="cb2-116"><a href="#cb2-116" tabindex="-1"></a><span class="co">#&gt; [1] 99</span></span>
+<span id="cb2-117"><a href="#cb2-117" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;bootstrap_draws&quot;)attr(,&quot;bootstrap_type&quot;)</span></span>
+<span id="cb2-118"><a href="#cb2-118" tabindex="-1"></a><span class="co">#&gt; [1] &quot;wild&quot;</span></span>
+<span id="cb2-119"><a href="#cb2-119" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;bootstrap_draws&quot;)attr(,&quot;wild_weights&quot;)</span></span>
+<span id="cb2-120"><a href="#cb2-120" tabindex="-1"></a><span class="co">#&gt; [1] &quot;mammen&quot;</span></span>
+<span id="cb2-121"><a href="#cb2-121" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;bootstrap_draws&quot;)attr(,&quot;se_draws&quot;)</span></span>
+<span id="cb2-122"><a href="#cb2-122" tabindex="-1"></a><span class="co">#&gt;              Vmax       Km</span></span>
+<span id="cb2-123"><a href="#cb2-123" tabindex="-1"></a><span class="co">#&gt;   [1,] 0.06985208 1.935124</span></span>
+<span id="cb2-124"><a href="#cb2-124" tabindex="-1"></a><span class="co">#&gt;   [2,] 0.10246839 2.721211</span></span>
+<span id="cb2-125"><a href="#cb2-125" tabindex="-1"></a><span class="co">#&gt;   [3,] 0.06735485 1.783951</span></span>
+<span id="cb2-126"><a href="#cb2-126" tabindex="-1"></a><span class="co">#&gt;   [4,] 0.08946312 2.471365</span></span>
+<span id="cb2-127"><a href="#cb2-127" tabindex="-1"></a><span class="co">#&gt;   [5,] 0.08391186 2.185031</span></span>
+<span id="cb2-128"><a href="#cb2-128" tabindex="-1"></a><span class="co">#&gt;   [6,] 0.08787750 2.398055</span></span>
+<span id="cb2-129"><a href="#cb2-129" tabindex="-1"></a><span class="co">#&gt;   [7,] 0.08215916 2.240689</span></span>
+<span id="cb2-130"><a href="#cb2-130" tabindex="-1"></a><span class="co">#&gt;   [8,] 0.08112749 2.223237</span></span>
+<span id="cb2-131"><a href="#cb2-131" tabindex="-1"></a><span class="co">#&gt;   [9,] 0.06964822 1.871104</span></span>
+<span id="cb2-132"><a href="#cb2-132" tabindex="-1"></a><span class="co">#&gt;  [10,] 0.06270605 1.669348</span></span>
+<span id="cb2-133"><a href="#cb2-133" tabindex="-1"></a><span class="co">#&gt;  [11,] 0.09723531 2.566446</span></span>
+<span id="cb2-134"><a href="#cb2-134" tabindex="-1"></a><span class="co">#&gt;  [12,] 0.07315613 1.935708</span></span>
+<span id="cb2-135"><a href="#cb2-135" tabindex="-1"></a><span class="co">#&gt;  [13,] 0.06387095 1.718819</span></span>
+<span id="cb2-136"><a href="#cb2-136" tabindex="-1"></a><span class="co">#&gt;  [14,] 0.06907691 1.837610</span></span>
+<span id="cb2-137"><a href="#cb2-137" tabindex="-1"></a><span class="co">#&gt;  [15,] 0.08942662 2.312088</span></span>
+<span id="cb2-138"><a href="#cb2-138" tabindex="-1"></a><span class="co">#&gt;  [16,] 0.06834826 1.824457</span></span>
+<span id="cb2-139"><a href="#cb2-139" tabindex="-1"></a><span class="co">#&gt;  [17,] 0.06262306 1.693470</span></span>
+<span id="cb2-140"><a href="#cb2-140" tabindex="-1"></a><span class="co">#&gt;  [18,] 0.09244142 2.436773</span></span>
+<span id="cb2-141"><a href="#cb2-141" tabindex="-1"></a><span class="co">#&gt;  [19,] 0.09928960 2.726513</span></span>
+<span id="cb2-142"><a href="#cb2-142" tabindex="-1"></a><span class="co">#&gt;  [20,] 0.07677103 2.087400</span></span>
+<span id="cb2-143"><a href="#cb2-143" tabindex="-1"></a><span class="co">#&gt;  [21,] 0.07698530 2.115122</span></span>
+<span id="cb2-144"><a href="#cb2-144" tabindex="-1"></a><span class="co">#&gt;  [22,] 0.09008626 2.360508</span></span>
+<span id="cb2-145"><a href="#cb2-145" tabindex="-1"></a><span class="co">#&gt;  [23,] 0.08547042 2.349661</span></span>
+<span id="cb2-146"><a href="#cb2-146" tabindex="-1"></a><span class="co">#&gt;  [24,] 0.07809181 2.133862</span></span>
+<span id="cb2-147"><a href="#cb2-147" tabindex="-1"></a><span class="co">#&gt;  [25,] 0.07836180 2.118843</span></span>
+<span id="cb2-148"><a href="#cb2-148" tabindex="-1"></a><span class="co">#&gt;  [26,] 0.07504769 2.015870</span></span>
+<span id="cb2-149"><a href="#cb2-149" tabindex="-1"></a><span class="co">#&gt;  [27,] 0.06357009 1.728746</span></span>
+<span id="cb2-150"><a href="#cb2-150" tabindex="-1"></a><span class="co">#&gt;  [28,] 0.11550177 3.047138</span></span>
+<span id="cb2-151"><a href="#cb2-151" tabindex="-1"></a><span class="co">#&gt;  [29,] 0.07788269 2.105225</span></span>
+<span id="cb2-152"><a href="#cb2-152" tabindex="-1"></a><span class="co">#&gt;  [30,] 0.09938417 2.613052</span></span>
+<span id="cb2-153"><a href="#cb2-153" tabindex="-1"></a><span class="co">#&gt;  [31,] 0.05738243 1.533743</span></span>
+<span id="cb2-154"><a href="#cb2-154" tabindex="-1"></a><span class="co">#&gt;  [32,] 0.08069294 2.170478</span></span>
+<span id="cb2-155"><a href="#cb2-155" tabindex="-1"></a><span class="co">#&gt;  [33,] 0.06924554 1.841238</span></span>
+<span id="cb2-156"><a href="#cb2-156" tabindex="-1"></a><span class="co">#&gt;  [34,] 0.12740395 3.434337</span></span>
+<span id="cb2-157"><a href="#cb2-157" tabindex="-1"></a><span class="co">#&gt;  [35,] 0.07649214 2.051568</span></span>
+<span id="cb2-158"><a href="#cb2-158" tabindex="-1"></a><span class="co">#&gt;  [36,] 0.06966066 1.848912</span></span>
+<span id="cb2-159"><a href="#cb2-159" tabindex="-1"></a><span class="co">#&gt;  [37,] 0.07615177 2.022158</span></span>
+<span id="cb2-160"><a href="#cb2-160" tabindex="-1"></a><span class="co">#&gt;  [38,] 0.06883002 1.836538</span></span>
+<span id="cb2-161"><a href="#cb2-161" tabindex="-1"></a><span class="co">#&gt;  [39,] 0.11082711 2.967009</span></span>
+<span id="cb2-162"><a href="#cb2-162" tabindex="-1"></a><span class="co">#&gt;  [40,] 0.06943604 1.872134</span></span>
+<span id="cb2-163"><a href="#cb2-163" tabindex="-1"></a><span class="co">#&gt;  [41,] 0.08286175 2.287154</span></span>
+<span id="cb2-164"><a href="#cb2-164" tabindex="-1"></a><span class="co">#&gt;  [42,] 0.06895697 1.876023</span></span>
+<span id="cb2-165"><a href="#cb2-165" tabindex="-1"></a><span class="co">#&gt;  [43,] 0.08397688 2.247013</span></span>
+<span id="cb2-166"><a href="#cb2-166" tabindex="-1"></a><span class="co">#&gt;  [44,] 0.11008318 2.956345</span></span>
+<span id="cb2-167"><a href="#cb2-167" tabindex="-1"></a><span class="co">#&gt;  [45,] 0.10509946 2.773038</span></span>
+<span id="cb2-168"><a href="#cb2-168" tabindex="-1"></a><span class="co">#&gt;  [46,] 0.11417859 3.071443</span></span>
+<span id="cb2-169"><a href="#cb2-169" tabindex="-1"></a><span class="co">#&gt;  [47,] 0.06588085 1.772678</span></span>
+<span id="cb2-170"><a href="#cb2-170" tabindex="-1"></a><span class="co">#&gt;  [48,] 0.07496306 2.001667</span></span>
+<span id="cb2-171"><a href="#cb2-171" tabindex="-1"></a><span class="co">#&gt;  [49,] 0.05970155 1.589968</span></span>
+<span id="cb2-172"><a href="#cb2-172" tabindex="-1"></a><span class="co">#&gt;  [50,] 0.10320772 2.781921</span></span>
+<span id="cb2-173"><a href="#cb2-173" tabindex="-1"></a><span class="co">#&gt;  [51,] 0.06368762 1.722687</span></span>
+<span id="cb2-174"><a href="#cb2-174" tabindex="-1"></a><span class="co">#&gt;  [52,] 0.06434465 1.761755</span></span>
+<span id="cb2-175"><a href="#cb2-175" tabindex="-1"></a><span class="co">#&gt;  [53,] 0.06786972 1.815773</span></span>
+<span id="cb2-176"><a href="#cb2-176" tabindex="-1"></a><span class="co">#&gt;  [54,] 0.10341771 2.752472</span></span>
+<span id="cb2-177"><a href="#cb2-177" tabindex="-1"></a><span class="co">#&gt;  [55,] 0.07591162 2.035847</span></span>
+<span id="cb2-178"><a href="#cb2-178" tabindex="-1"></a><span class="co">#&gt;  [56,] 0.10580533 2.774245</span></span>
+<span id="cb2-179"><a href="#cb2-179" tabindex="-1"></a><span class="co">#&gt;  [57,] 0.08402381 2.240719</span></span>
+<span id="cb2-180"><a href="#cb2-180" tabindex="-1"></a><span class="co">#&gt;  [58,] 0.07026170 1.884538</span></span>
+<span id="cb2-181"><a href="#cb2-181" tabindex="-1"></a><span class="co">#&gt;  [59,] 0.08045964 2.175535</span></span>
+<span id="cb2-182"><a href="#cb2-182" tabindex="-1"></a><span class="co">#&gt;  [60,] 0.09580167 2.511072</span></span>
+<span id="cb2-183"><a href="#cb2-183" tabindex="-1"></a><span class="co">#&gt;  [61,] 0.09470489 2.533849</span></span>
+<span id="cb2-184"><a href="#cb2-184" tabindex="-1"></a><span class="co">#&gt;  [62,] 0.10681429 2.832647</span></span>
+<span id="cb2-185"><a href="#cb2-185" tabindex="-1"></a><span class="co">#&gt;  [63,] 0.06495163 1.739009</span></span>
+<span id="cb2-186"><a href="#cb2-186" tabindex="-1"></a><span class="co">#&gt;  [64,] 0.08706395 2.368834</span></span>
+<span id="cb2-187"><a href="#cb2-187" tabindex="-1"></a><span class="co">#&gt;  [65,] 0.09176504 2.467235</span></span>
+<span id="cb2-188"><a href="#cb2-188" tabindex="-1"></a><span class="co">#&gt;  [66,] 0.08347602 2.234426</span></span>
+<span id="cb2-189"><a href="#cb2-189" tabindex="-1"></a><span class="co">#&gt;  [67,] 0.10286184 2.719394</span></span>
+<span id="cb2-190"><a href="#cb2-190" tabindex="-1"></a><span class="co">#&gt;  [68,] 0.09143797 2.526102</span></span>
+<span id="cb2-191"><a href="#cb2-191" tabindex="-1"></a><span class="co">#&gt;  [69,] 0.06791179 1.799408</span></span>
+<span id="cb2-192"><a href="#cb2-192" tabindex="-1"></a><span class="co">#&gt;  [70,] 0.08130941 2.218032</span></span>
+<span id="cb2-193"><a href="#cb2-193" tabindex="-1"></a><span class="co">#&gt;  [71,] 0.06825023 1.844812</span></span>
+<span id="cb2-194"><a href="#cb2-194" tabindex="-1"></a><span class="co">#&gt;  [72,] 0.11440296 3.109920</span></span>
+<span id="cb2-195"><a href="#cb2-195" tabindex="-1"></a><span class="co">#&gt;  [73,] 0.06073428 1.648749</span></span>
+<span id="cb2-196"><a href="#cb2-196" tabindex="-1"></a><span class="co">#&gt;  [74,] 0.07796900 2.156834</span></span>
+<span id="cb2-197"><a href="#cb2-197" tabindex="-1"></a><span class="co">#&gt;  [75,] 0.07508047 2.022909</span></span>
+<span id="cb2-198"><a href="#cb2-198" tabindex="-1"></a><span class="co">#&gt;  [76,] 0.10677764 2.834709</span></span>
+<span id="cb2-199"><a href="#cb2-199" tabindex="-1"></a><span class="co">#&gt;  [77,] 0.09604369 2.571415</span></span>
+<span id="cb2-200"><a href="#cb2-200" tabindex="-1"></a><span class="co">#&gt;  [78,] 0.08721350 2.371596</span></span>
+<span id="cb2-201"><a href="#cb2-201" tabindex="-1"></a><span class="co">#&gt;  [79,] 0.06570885 1.776283</span></span>
+<span id="cb2-202"><a href="#cb2-202" tabindex="-1"></a><span class="co">#&gt;  [80,] 0.05785708 1.557014</span></span>
+<span id="cb2-203"><a href="#cb2-203" tabindex="-1"></a><span class="co">#&gt;  [81,] 0.06421274 1.714279</span></span>
+<span id="cb2-204"><a href="#cb2-204" tabindex="-1"></a><span class="co">#&gt;  [82,] 0.09237578 2.415500</span></span>
+<span id="cb2-205"><a href="#cb2-205" tabindex="-1"></a><span class="co">#&gt;  [83,] 0.07133711 1.894212</span></span>
+<span id="cb2-206"><a href="#cb2-206" tabindex="-1"></a><span class="co">#&gt;  [84,] 0.09829563 2.626123</span></span>
+<span id="cb2-207"><a href="#cb2-207" tabindex="-1"></a><span class="co">#&gt;  [85,] 0.09614009 2.600597</span></span>
+<span id="cb2-208"><a href="#cb2-208" tabindex="-1"></a><span class="co">#&gt;  [86,] 0.06440193 1.752572</span></span>
+<span id="cb2-209"><a href="#cb2-209" tabindex="-1"></a><span class="co">#&gt;  [87,] 0.09357089 2.587562</span></span>
+<span id="cb2-210"><a href="#cb2-210" tabindex="-1"></a><span class="co">#&gt;  [88,] 0.07474818 2.002868</span></span>
+<span id="cb2-211"><a href="#cb2-211" tabindex="-1"></a><span class="co">#&gt;  [89,] 0.06268655 1.699433</span></span>
+<span id="cb2-212"><a href="#cb2-212" tabindex="-1"></a><span class="co">#&gt;  [90,] 0.10975734 2.941041</span></span>
+<span id="cb2-213"><a href="#cb2-213" tabindex="-1"></a><span class="co">#&gt;  [91,] 0.10045591 2.647836</span></span>
+<span id="cb2-214"><a href="#cb2-214" tabindex="-1"></a><span class="co">#&gt;  [92,] 0.07292105 2.020010</span></span>
+<span id="cb2-215"><a href="#cb2-215" tabindex="-1"></a><span class="co">#&gt;  [93,] 0.09533099 2.538228</span></span>
+<span id="cb2-216"><a href="#cb2-216" tabindex="-1"></a><span class="co">#&gt;  [94,] 0.05871973 1.587018</span></span>
+<span id="cb2-217"><a href="#cb2-217" tabindex="-1"></a><span class="co">#&gt;  [95,] 0.06068649 1.649058</span></span>
+<span id="cb2-218"><a href="#cb2-218" tabindex="-1"></a><span class="co">#&gt;  [96,] 0.07445737 2.017298</span></span>
+<span id="cb2-219"><a href="#cb2-219" tabindex="-1"></a><span class="co">#&gt;  [97,] 0.07664515 2.096006</span></span>
+<span id="cb2-220"><a href="#cb2-220" tabindex="-1"></a><span class="co">#&gt;  [98,] 0.09689460 2.557056</span></span>
+<span id="cb2-221"><a href="#cb2-221" tabindex="-1"></a><span class="co">#&gt;  [99,] 0.09746000 2.565203</span></span>
+<span id="cb2-222"><a href="#cb2-222" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;bootstrap_draws&quot;)attr(,&quot;bootstrap_ci&quot;)</span></span>
+<span id="cb2-223"><a href="#cb2-223" tabindex="-1"></a><span class="co">#&gt; [1] &quot;studentized&quot;</span></span>
+<span id="cb2-224"><a href="#cb2-224" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">predict</span>(fit, <span class="at">newdata =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">80</span>, <span class="at">length.out =</span> <span class="dv">6</span>), <span class="at">interval =</span> <span class="st">&quot;prediction&quot;</span>))</span>
+<span id="cb2-225"><a href="#cb2-225" tabindex="-1"></a><span class="co">#&gt;    x      fit     se.fit working_variance           lwr          upr</span></span>
+<span id="cb2-226"><a href="#cb2-226" tabindex="-1"></a><span class="co">#&gt; 1  0 0.000000 0.00000000     1.203550e-11 -6.799549e-06 6.799549e-06</span></span>
+<span id="cb2-227"><a href="#cb2-227" tabindex="-1"></a><span class="co">#&gt; 2 16 1.113395 0.01709891     4.814198e-03  9.733357e-01 1.253455e+00</span></span>
+<span id="cb2-228"><a href="#cb2-228" tabindex="-1"></a><span class="co">#&gt; 3 32 1.898201 0.02294258     6.808304e-03  1.730345e+00 2.066058e+00</span></span>
+<span id="cb2-229"><a href="#cb2-229" tabindex="-1"></a><span class="co">#&gt; 4 48 2.481175 0.02455237     8.338436e-03  2.295844e+00 2.666505e+00</span></span>
+<span id="cb2-230"><a href="#cb2-230" tabindex="-1"></a><span class="co">#&gt; 5 64 2.931304 0.02479206     9.628397e-03  2.732941e+00 3.129668e+00</span></span>
+<span id="cb2-231"><a href="#cb2-231" tabindex="-1"></a><span class="co">#&gt; 6 80 3.289353 0.02489137     1.076487e-02  3.080229e+00 3.498477e+00</span></span></code></pre></div>
 <p>For a one-step console summary plus a 95% confidence band, use:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">report_mm</span>(fit, <span class="at">interval_type =</span> <span class="st">&quot;confidence&quot;</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">report_mm</span>(fit, <span class="at">method =</span> <span class="st">&quot;bootstrap&quot;</span>, <span class="at">B =</span> <span class="dv">99</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>          <span class="at">interval_type =</span> <span class="st">&quot;confidence&quot;</span>)</span></code></pre></div>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">report_mm</span>(fit, <span class="at">method =</span> <span class="st">&quot;bootstrap&quot;</span>, <span class="at">B =</span> <span class="dv">99</span>, <span class="at">seed =</span> <span class="dv">1</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>          <span class="at">interval_type =</span> <span class="st">&quot;confidence&quot;</span>)</span></code></pre></div>
 </div>
 <div id="screening-working-variance-models" class="section level2">
 <h2>Screening working variance models</h2>
@@ -748,16 +746,15 @@ an explicit sensitivity analysis.</p>
 </div>
 <div id="simulation" class="section level2">
 <h2>Simulation</h2>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>sim_dat <span class="ot">&lt;-</span> <span class="fu">simulate_mm_data</span>(<span class="at">variance_shape =</span> <span class="st">&quot;hill&quot;</span>, <span class="at">error =</span> <span class="st">&quot;skewed&quot;</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="fu">head</span>(sim_dat)</span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt;   x         y true_mean true_variance      error</span></span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; 1 1  4.065991  4.761905      1.022444 -0.6882333</span></span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; 2 2  7.609953  9.090909      1.089109 -1.4190785</span></span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt; 3 3 13.785376 13.043478      1.198044  0.6778096</span></span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; 4 4 16.505541 16.666667      1.346154 -0.1388731</span></span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; 5 5 20.075119 20.000000      1.529412  0.0607418</span></span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co">#&gt; 6 6 22.084203 23.076923      1.743119 -0.7519053</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>sim_dat <span class="ot">&lt;-</span> <span class="fu">simulate_mm_data</span>(<span class="at">seed =</span> <span class="dv">100</span>, <span class="at">variance_shape =</span> <span class="st">&quot;hill&quot;</span>, <span class="at">error =</span> <span class="st">&quot;skewed&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">head</span>(sim_dat)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt;   x         y true_mean true_variance      error</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt; 1 1  4.065991  4.761905      1.022444 -0.6882333</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; 2 2  7.609953  9.090909      1.089109 -1.4190785</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; 3 3 13.785376 13.043478      1.198044  0.6778096</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt; 4 4 16.505541 16.666667      1.346154 -0.1388731</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; 5 5 20.075119 20.000000      1.529412  0.0607418</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; 6 6 22.084203 23.076923      1.743119 -0.7519053</span></span></code></pre></div>
 <p>The package is intentionally lightweight: it relies only on base and
 recommended R packages, while keeping the workflow close to the
 heteroscedastic and clustered Michaelis-Menten analyses used in the

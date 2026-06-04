@@ -1,7 +1,7 @@
 Package: inferMM
 Type: Package
 Title: Variance-Aware Michaelis-Menten Estimation and Inference
-Version: 0.0.2
+Version: 0.0.3
 Authors@R: c(
     person(given = "Mijeong", family = "Kim", role = c("aut", "cre"),
            email = "m.kim@ewha.ac.kr"),
@@ -26,10 +26,10 @@ Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 NeedsCompilation: no
-Packaged: 2026-05-20 03:15:42 UTC; mijeongkim
+Packaged: 2026-06-04 05:09:00 UTC; mijeongkim
 Author: Mijeong Kim [aut, cre],
   Minkyoung Cha [aut],
   Ah Young Jeong [aut]
 Maintainer: Mijeong Kim <m.kim@ewha.ac.kr>
 Repository: CRAN
-Date/Publication: 2026-05-27 19:20:02 UTC
+Date/Publication: 2026-06-04 06:30:02 UTC

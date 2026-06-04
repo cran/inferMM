@@ -105,18 +105,16 @@ concentration-dependent working variance specification.
 \details{
 Built-in working variance models are \code{"constant"}, \code{"log"},
 \code{"sqrt"}, \code{"cuberoot"}, \code{"power"}, and \code{"auto"}.
-The constant-variance case uses
-nonlinear least squares, while the heteroscedastic cases use the profile-score
-estimator from the companion methodology work. Confidence intervals can be
+All built-in single-curve fits use the Michaelis-Menten profile-score
+estimator from the companion methodology work, with the constant-variance case
+treated as the special case \eqn{h(S) \equiv 1}. Confidence intervals can be
 computed either from the default asymptotic Wald approximation or from a
 bootstrap refitting scheme. The bootstrap option supports percentile, basic,
 and studentized calibration, together with wild or pairs resampling. The
 default printed summaries suppress interval output when the fitted curve has
 fewer than 20 observations or fewer than 6 distinct substrate concentrations;
 in that setting, \code{confint()} remains available as an explicit sensitivity
-analysis tool and issues a warning.
-The
-automatic option compares
+analysis tool and issues a warning. The automatic option compares
 \code{log(S + 1)} with a user-supplied grid of \eqn{S^p} working variance
 functions and keeps the best fit according to quasi-AIC or quasi-BIC.
 }

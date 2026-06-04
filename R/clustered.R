@@ -155,36 +155,18 @@ fit_cluster_mm_weighted <- function(cleaned,
     ),
     error = function(e) e
   )
-  initialization_method <- "pooled variance-aware fit"
+  initialization_method <- "pooled single-curve profile-score fit"
   initialization_warning <- NULL
 
   if (inherits(pooled_start, "error")) {
-    pooled_error <- conditionMessage(pooled_start)
-    pooled_start <- tryCatch(
-      fit_mm_nls(
-        x = x_all,
-        y = y_all,
-        interval_level = interval_level,
-        allow_zero_substrate = allow_zero_substrate
-      ),
-      error = function(e) e
-    )
-    initialization_method <- "pooled homoscedastic NLS fallback"
-    initialization_warning <- paste(
-      "Variance-aware pooled initialization failed;",
-      "cluster_mm() fell back to a pooled homoscedastic NLS start.",
-      "Original error:",
-      pooled_error
-    )
-    if (inherits(pooled_start, "error")) {
-      stop(
-        "Unable to initialize cluster_mm(). ",
-        initialization_warning,
-        " Fallback NLS error: ",
+    stop(
+      paste(
+        "Unable to initialize cluster_mm() from the pooled single-curve",
+        "profile-score fit.",
         conditionMessage(pooled_start)
-      )
-    }
-    warning(initialization_warning, call. = FALSE)
+      ),
+      call. = FALSE
+    )
   }
 
   Vmax <- unname(coef(pooled_start)["Vmax"])

@@ -85,4 +85,3 @@ head(predict(cluster_fit, newdata = seq(0, 700, length.out = 6),
 set.seed(100)
 sim_dat <- simulate_mm_data(variance_shape = "hill", error = "skewed")
 head(sim_dat)
-

@@ -122,11 +122,11 @@ effects specification.
 Numerically, the routine initializes the clustered fit from the corresponding
 pooled single-curve estimator and then alternates a one-dimensional update for
 \eqn{K_m} with plug-in updates for \eqn{V_{\max}} and moment-based updates for
-the variance components. If the variance-aware pooled start fails, the code
-falls back to a pooled homoscedastic NLS start and records that choice in the
-returned object. Fits that reach the maximum number of outer iterations without
-meeting the convergence tolerance remain available but carry an explicit
-convergence warning in the object summary.
+the variance components. The pooled start is obtained from the same
+single-curve profile-score machinery used by \code{fit_mm()}, including the
+constant-variance special case. Fits that reach the maximum number of outer
+iterations without meeting the convergence tolerance remain available but
+carry an explicit convergence warning in the object summary.
 
 Because small numbers of clusters can make first-order interval calibration
 fragile, printed summaries suppress interval output by default when fewer than

@@ -107,69 +107,6 @@ fit_mm_weighted <- function(x,
   )
 }
 
-fit_mm_nls <- function(x,
-                       y,
-                       interval_level = 0.95,
-                       call = NULL,
-                       allow_zero_substrate = TRUE,
-                       variance_selection_mode = NULL,
-                       variance_selection = NULL,
-                       power_grid = NULL,
-                       candidate_table = NULL) {
-  dat <- data.frame(x = x, y = y)
-  start_v <- max(y, na.rm = TRUE)
-  if (!is.finite(start_v) || start_v <= 0) {
-    start_v <- 1
-  }
-
-  fit <- stats::nls(
-    y ~ (V * x) / (K + x),
-    data = dat,
-    start = list(V = 1.05 * start_v, K = stats::median(x)),
-    control = stats::nls.control(maxiter = 200, warnOnly = TRUE)
-  )
-
-  cf <- stats::coef(fit)
-  beta <- c(Vmax = unname(cf[["V"]]), Km = unname(cf[["K"]]))
-  fitted <- mm_mean(x, beta["Vmax"], beta["Km"])
-  residuals <- y - fitted
-  sigma2_hat <- mean(residuals^2)
-  variance_hat <- rep(sigma2_hat, length(x))
-  vcov_beta <- as.matrix(stats::vcov(fit))
-  dimnames(vcov_beta) <- list(names(beta), names(beta))
-  criteria <- quasi_metrics(y, fitted, variance_hat, k = 3L)
-
-  structure(
-    c(
-      list(
-        coefficients = beta,
-        vcov = vcov_beta,
-        scale = sigma2_hat,
-        fitted.values = fitted,
-        residuals = residuals,
-        variance_hat = variance_hat,
-        x = x,
-        y = y,
-        variance_model = "constant",
-        variance_label = model_display_label("constant"),
-        variance_fun = variance_function("constant"),
-        variance_power = NULL,
-        variance_selection_mode = variance_selection_mode,
-        variance_selection = variance_selection,
-        power_grid = power_grid,
-        variance_candidate_table = candidate_table,
-        method = "nls",
-        interval_level = interval_level,
-        km_bounds = default_km_bounds(x),
-        allow_zero_substrate = allow_zero_substrate,
-        call = call
-      ),
-      criteria
-    ),
-    class = "fit_mm"
-  )
-}
-
 fit_mm_from_spec <- function(x,
                              y,
                              variance,
@@ -186,21 +123,8 @@ fit_mm_from_spec <- function(x,
     variance = variance,
     power = power
   )
-
-  if (identical(variance_spec$model, "constant")) {
-    return(
-      fit_mm_nls(
-        x = x,
-        y = y,
-        interval_level = interval_level,
-        call = call,
-        allow_zero_substrate = allow_zero_substrate,
-        variance_selection_mode = variance_selection_mode,
-        variance_selection = variance_selection,
-        power_grid = power_grid,
-        candidate_table = candidate_table
-      )
-    )
+  if (is.null(km_bounds)) {
+    km_bounds <- default_km_bounds(x)
   }
 
   fit_mm_weighted(
