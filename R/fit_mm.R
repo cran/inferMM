@@ -1,5 +1,5 @@
 weighted_score_function <- function(km, x, y, h_vals) {
-  w <- 1 / safe_pos(h_vals)
+  w <- 1 / h_vals
   left_1 <- sum(w * x * y / (km + x))
   right_1 <- sum(w * x^2 / (km + x)^3)
   left_2 <- sum(w * x * y / (km + x)^2)
@@ -8,44 +8,10 @@ weighted_score_function <- function(km, x, y, h_vals) {
 }
 
 weighted_vmax_hat <- function(km, x, y, h_vals) {
-  w <- 1 / safe_pos(h_vals)
+  w <- 1 / h_vals
   numerator <- sum(w * x * y / (km + x))
   denominator <- sum(w * x^2 / (km + x)^2)
   numerator / denominator
-}
-
-find_km_root <- function(score_fun, bounds, grid_n = 400L) {
-  grid <- exp(seq(log(bounds[1]), log(bounds[2]), length.out = grid_n))
-  values <- vapply(
-    grid,
-    function(k) {
-      val <- tryCatch(score_fun(k), error = function(e) NA_real_)
-      if (!is.finite(val)) {
-        return(NA_real_)
-      }
-      val
-    },
-    numeric(1)
-  )
-
-  ok_pair <- is.finite(values[-length(values)]) & is.finite(values[-1])
-  sign_change <- values[-length(values)] * values[-1] <= 0
-  idx <- which(ok_pair & sign_change)
-
-  if (length(idx) > 0L) {
-    hit <- idx[1]
-    return(stats::uniroot(score_fun, interval = c(grid[hit], grid[hit + 1]))$root)
-  }
-
-  objective <- function(log_k) {
-    val <- tryCatch(score_fun(exp(log_k)), error = function(e) Inf)
-    if (!is.finite(val)) {
-      return(Inf)
-    }
-    val^2
-  }
-
-  exp(stats::optimize(objective, interval = log(bounds))$minimum)
 }
 
 fit_mm_weighted <- function(x,
@@ -59,22 +25,41 @@ fit_mm_weighted <- function(x,
                             variance_selection = NULL,
                             power_grid = NULL,
                             candidate_table = NULL) {
-  h_raw <- variance_spec$fun(x)
-  h_vals <- safe_pos(h_raw)
-  km_hat <- find_km_root(
-    score_fun = function(k) weighted_score_function(k, x, y, h_vals),
-    bounds = km_bounds
-  )
-  vmax_hat <- weighted_vmax_hat(km_hat, x, y, h_vals)
-  fitted <- mm_mean(x, vmax_hat, km_hat)
+  h_raw <- evaluate_variance_function(variance_spec$fun, x)
+  custom <- identical(variance_spec$model, "custom")
+  # Rescaling a fixed custom shape changes gamma, not the fitted variance.
+  h_normalization <- if (custom) exp(mean(log(h_raw))) else 1
+  h_vals <- h_raw / h_normalization
+  if (custom && (any(!is.finite(h_vals)) || any(h_vals <= 0) ||
+                 any(!is.finite(1 / h_vals)))) {
+    stop("The custom variance shape has too large a dynamic range for numerical fitting.",
+         call. = FALSE)
+  }
+  profile <- find_km_root(x, y, h_vals, km_bounds)
+  km_hat <- profile$root
+  vmax_hat <- profile$vmax
+  fitted <- vmax_hat * (x / (km_hat + x))
   residuals <- y - fitted
-  gamma_hat <- mean(residuals^2 / h_vals)
+  normalized_scale <- mean(residuals^2 / h_vals)
+  gamma_hat <- normalized_scale / h_normalization
+  if (any(!is.finite(c(normalized_scale, gamma_hat))) ||
+      normalized_scale <= 0 || gamma_hat <= 0) {
+    profile_fit_error("variance-scale validation", "non_positive_parameters", km_bounds,
+                      profile$convergence$score_norm, profile$convergence$tolerance,
+                      profile$convergence$candidate_count)
+  }
   grad <- mm_grad(x, vmax_hat, km_hat)
-  info <- crossprod(grad, grad / h_vals) / length(x)
-  vcov_beta <- gamma_hat * safe_inverse(info) / length(x)
+  covariance <- profile_covariance(grad, h_vals, normalized_scale, km_bounds,
+                                    profile$convergence)
+  vcov_beta <- covariance$covariance
+  profile$convergence$information_rcond <- covariance$information_rcond
   beta <- c(Vmax = unname(vmax_hat), Km = unname(km_hat))
-  variance_hat <- gamma_hat * h_vals
-  criteria <- quasi_metrics(y, fitted, variance_hat, k = 3L)
+  variance_hat <- normalized_scale * h_vals
+  if (custom && (!all(is.finite(c(beta, vcov_beta, gamma_hat))) || gamma_hat <= 0)) {
+    stop("The custom variance fit produced non-finite estimates or a non-positive scale; check the data and variance shape.",
+         call. = FALSE)
+  }
+  criteria <- quasi_metrics(y, fitted, variance_hat, k = 3L, clamp = !custom)
 
   structure(
     c(
@@ -82,6 +67,8 @@ fit_mm_weighted <- function(x,
         coefficients = beta,
         vcov = vcov_beta,
         scale = gamma_hat,
+        normalized_scale = normalized_scale,
+        variance_normalization = h_normalization,
         fitted.values = fitted,
         residuals = residuals,
         variance_hat = variance_hat,
@@ -98,6 +85,7 @@ fit_mm_weighted <- function(x,
         method = "profile-score",
         interval_level = interval_level,
         km_bounds = km_bounds,
+        convergence = profile$convergence,
         allow_zero_substrate = allow_zero_substrate,
         call = call
       ),
@@ -159,7 +147,7 @@ search_auto_variance <- function(x,
   )
 
   fits <- lapply(candidates, function(spec) {
-    fit_mm_from_spec(
+    tryCatch(fit_mm_from_spec(
       x = x,
       y = y,
       variance = spec$model,
@@ -168,31 +156,42 @@ search_auto_variance <- function(x,
       km_bounds = km_bounds,
       allow_zero_substrate = allow_zero_substrate,
       call = call
-    )
+    ), error = function(e) e)
   })
 
   candidate_table <- do.call(
     rbind,
-    lapply(fits, function(fit) {
+    lapply(seq_along(fits), function(i) {
+      fit <- fits[[i]]
+      spec <- candidates[[i]]
+      failed <- inherits(fit, "error")
       data.frame(
-        candidate = if (identical(fit$variance_model, "power")) {
-          power_model_name(fit$variance_power)
+        candidate = if (identical(spec$model, "power")) {
+          power_model_name(spec$power)
         } else {
-          fit$variance_model
+          spec$model
         },
-        label = fit$variance_label,
-        power = if (identical(fit$variance_model, "power")) fit$variance_power else NA_real_,
-        quasi_aic = fit$quasi_aic,
-        quasi_bic = fit$quasi_bic,
-        rmse = fit$rmse,
-        weighted_rss = fit$weighted_rss,
+        label = resolve_variance_spec(spec$model, spec$power)$label,
+        power = if (identical(spec$model, "power")) spec$power else NA_real_,
+        quasi_aic = if (failed) NA_real_ else fit$quasi_aic,
+        quasi_bic = if (failed) NA_real_ else fit$quasi_bic,
+        rmse = if (failed) NA_real_ else fit$rmse,
+        weighted_rss = if (failed) NA_real_ else fit$weighted_rss,
+        success = as.integer(!failed),
+        error_message = if (failed) conditionMessage(fit) else NA_character_,
         stringsAsFactors = FALSE
       )
     })
   )
   row.names(candidate_table) <- NULL
 
-  best_idx <- which.min(candidate_table[[power_selection]])[1]
+  successful <- which(candidate_table$success == 1L & is.finite(candidate_table[[power_selection]]))
+  if (!length(successful)) {
+    profile_fit_error("variance-model selection", "no_successful_candidate",
+                      if (is.null(km_bounds)) default_km_bounds(x) else km_bounds,
+                      detail = paste(candidate_table$error_message, collapse = " | "))
+  }
+  best_idx <- successful[which.min(candidate_table[[power_selection]][successful])]
   best_fit <- fits[[best_idx]]
   best_fit$variance_selection_mode <- "auto"
   best_fit$variance_selection <- power_selection
@@ -209,7 +208,9 @@ search_auto_variance <- function(x,
 #'
 #' @param x Numeric vector of substrate concentrations.
 #' @param y Numeric vector of observed reaction velocities.
-#' @param variance Character string naming a built-in working variance model.
+#' @param variance A built-in model name or a fixed, vectorized, strictly positive
+#'   function of substrate concentration. Use `variance_function()` to label a
+#'   custom function. Its shape parameters are not estimated.
 #'   Use `"power"` with a fixed exponent or `"auto"` to compare `log(S + 1)`
 #'   against a grid of power functions.
 #' @param power Optional exponent used when `variance = "power"`.
@@ -233,7 +234,9 @@ fit_mm <- function(x,
                    km_bounds = NULL,
                    allow_zero_substrate = TRUE) {
   validated <- validate_mm_inputs(x, y, allow_zero_substrate = allow_zero_substrate)
-  variance <- normalize_variance_model(match.arg(variance))
+  if (!is.function(variance)) {
+    variance <- normalize_variance_model(match.arg(variance))
+  }
   power_selection <- match.arg(power_selection)
 
   if (is.null(km_bounds)) {

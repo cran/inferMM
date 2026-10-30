@@ -9,10 +9,10 @@ bibentry(
     person("Ah Young", "Jeong")
   ),
   year = "2026",
-  note = "R package version 0.0.3",
+  note = "R package version 0.1.1",
   textVersion = paste(
     "Kim, M., Cha, M., and Jeong, A. Y. (2026).",
     "inferMM: Variance-Aware Michaelis-Menten Estimation and Inference.",
-    "R package version 0.0.3."
+    "R package version 0.1.1."
   )
 )

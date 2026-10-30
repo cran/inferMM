@@ -11,7 +11,8 @@ report_mm(object, level = object$interval_level,
   digits = max(3L, getOption("digits") - 2L), ...)
 }
 \arguments{
-  \item{object}{A fitted object returned by \code{\link{fit_mm}} or
+  \item{object}{A fitted object returned by \code{\link{fit_mm}},
+  \code{\link{fit_mm_moments}}, or
   \code{\link{cluster_mm}}.}
   \item{level}{Confidence level used in the printed summary and plot.}
   \item{method}{Interval method used in the printed summary:
@@ -19,14 +20,15 @@ report_mm(object, level = object$interval_level,
   \item{B}{Number of bootstrap resamples when
   \code{method = "bootstrap"}.}
   \item{bootstrap_type}{Bootstrap scheme used when
-  \code{method = "bootstrap"}: \code{"wild"} or \code{"pairs"}.}
+  \code{method = "bootstrap"}: \code{"wild"} or \code{"pairs"}.
+  Higher-moment fits default to and require \code{"pairs"}.}
   \item{bootstrap_ci}{Bootstrap interval calibration used when
   \code{method = "bootstrap"}: \code{"studentized"}, \code{"basic"}, or
   \code{"percentile"}.}
   \item{wild_weights}{Wild-bootstrap multipliers used when
   \code{bootstrap_type = "wild"}: \code{"mammen"} or
   \code{"rademacher"}.}
-  \item{seed}{Deprecated and ignored. Call \code{stats::set.seed()} before
+  \item{seed}{Deprecated and ignored. Call \code{set.seed()} before
   bootstrap-based summaries if reproducibility is needed.}
   \item{interval_type}{Character string indicating whether the plotted band
   should be \code{"confidence"}, \code{"prediction"}, or \code{"none"}.}
@@ -49,6 +51,8 @@ available for \code{"cluster_mm"} objects.
 \description{
 Convenience wrapper that prints a fitted-model summary and draws the fitted
 curve with a confidence or prediction band.
+Higher-moment fits support pointwise mean-confidence bands, not prediction
+bands, because their working moments do not specify predictive quantiles.
 }
 \examples{
 one_curve <- subset(sdl_demo, enzyme == "1111")

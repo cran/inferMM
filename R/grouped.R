@@ -116,6 +116,8 @@ make_group_comparison_tables <- function(estimates) {
 #'   be strictly positive.
 #' @param sort_x Logical; sort observations within each group by concentration.
 #' @param quiet Logical; if `TRUE`, suppress progress messages.
+#' @param variance_functions Optional named list of fixed, vectorized positive
+#'   functions `h(S)`, forwarded to `screen_mm()` within every group.
 #'
 #' @return An object of class `"group_mm"`.
 #' @export
@@ -133,7 +135,8 @@ group_mm <- function(data,
                             invalid_substrate_values = numeric(0),
                             allow_zero_substrate = TRUE,
                             sort_x = TRUE,
-                            quiet = FALSE) {
+                            quiet = FALSE,
+                            variance_functions = NULL) {
   power_selection <- match.arg(power_selection)
   cleaned <- prepare_grouped_mm_data(
     data = data,
@@ -169,7 +172,8 @@ group_mm <- function(data,
       power_grid = power_grid,
       interval_level = interval_level,
       allow_zero_substrate = allow_zero_substrate,
-      quiet = TRUE
+      quiet = TRUE,
+      variance_functions = variance_functions
     )
 
     screen_table <- screen$table

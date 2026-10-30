@@ -236,7 +236,13 @@ predict.fit_mm <- function(object,
   grad <- mm_grad(x_new, beta["Vmax"], beta["Km"])
   mean_var <- rowSums((grad %*% vcov(object)) * grad)
   se_mean <- sqrt(pmax(mean_var, 0))
-  work_var <- object$scale * safe_pos(object$variance_fun(x_new))
+  h_values <- evaluate_variance_function(object$variance_fun, x_new)
+  if (identical(object$variance_model, "custom")) {
+    work_var <- object$normalized_scale * (h_values / object$variance_normalization)
+    validate_custom_variance_values(work_var, x_new)
+  } else {
+    work_var <- object$scale * h_values
+  }
 
   out <- data.frame(
     x = x_new,

@@ -38,6 +38,15 @@ prepare_cluster_mm_data <- function(data,
     keep <- keep & dat$.S > 0
   }
 
+  missing_cluster_id <- !stats::complete.cases(dat[cluster])
+  if (any(missing_cluster_id)) {
+    warning(sprintf(
+      "Removed %d observation(s) with missing cluster identifiers.",
+      sum(missing_cluster_id)
+    ), call. = FALSE)
+  }
+  keep <- keep & !missing_cluster_id
+
   dat <- dat[keep, , drop = FALSE]
   if (!nrow(dat)) {
     stop("No valid observations remain after cleaning.")
@@ -73,7 +82,9 @@ working_cov_inv_re <- function(z, h_vals, tau2, gamma) {
   d_inv <- 1 / safe_pos(gamma * h_vals)
   denom <- 1 + tau2 * sum(z^2 * d_inv)
   outer_piece <- outer(z * d_inv, z * d_inv)
-  diag(d_inv) - (tau2 / denom) * outer_piece
+  # A one-element vector is otherwise interpreted as a matrix size by diag().
+  diag(d_inv, nrow = length(d_inv), ncol = length(d_inv)) -
+    (tau2 / denom) * outer_piece
 }
 
 working_logdet_re <- function(z, h_vals, tau2, gamma) {
@@ -275,10 +286,13 @@ fit_cluster_mm_weighted <- function(cleaned,
       paste(
         "cluster_mm() reached the maximum of %d outer iterations",
         "without meeting the tolerance %.2e.",
-        "Estimates may still be usable, but treat the fit as numerically fragile."
+        "Last absolute parameter change: %.3e.",
+        "The fit has converged = FALSE; do not treat its estimates or confidence intervals as converged results.",
+        "Inspect substrate coverage, variance specification and scaling; no automatic method switch is performed."
       ),
       max_iter,
-      tol
+      tol,
+      delta
     )
     warning(convergence_warning, call. = FALSE)
   }
@@ -333,6 +347,8 @@ fit_cluster_mm_weighted <- function(cleaned,
         power_grid = power_grid,
         variance_candidate_table = candidate_table,
         method = "clustered-profile-score",
+        estimation_method = "profile",
+        covariance_method = "working-mean-information",
         converged = converged,
         iterations = iter,
         initialization_method = initialization_method,
@@ -357,13 +373,16 @@ fit_cluster_mm_from_spec <- function(cleaned,
                                      variance_selection_mode = NULL,
                                      variance_selection = NULL,
                                      power_grid = NULL,
-                                     candidate_table = NULL) {
+                                     candidate_table = NULL,
+                                     method = "profile",
+                                     km_bounds = NULL) {
   variance_spec <- resolve_variance_spec(
     variance = variance,
     power = power
   )
 
-  fit_cluster_mm_weighted(
+  fitter <- if (identical(method, "projected")) fit_cluster_mm_projected else fit_cluster_mm_weighted
+  args <- list(
     cleaned = cleaned,
     variance_spec = variance_spec,
     interval_level = interval_level,
@@ -374,6 +393,8 @@ fit_cluster_mm_from_spec <- function(cleaned,
     power_grid = power_grid,
     candidate_table = candidate_table
   )
+  if (identical(method, "projected")) args$km_bounds <- km_bounds
+  do.call(fitter, args, quote = TRUE)
 }
 
 search_auto_cluster_variance <- function(cleaned,
@@ -381,7 +402,9 @@ search_auto_cluster_variance <- function(cleaned,
                                          power_grid = default_power_grid(),
                                          interval_level = 0.95,
                                          allow_zero_substrate = TRUE,
-                                         call = NULL) {
+                                         call = NULL,
+                                         method = "profile",
+                                         km_bounds = NULL) {
   power_selection <- match.arg(power_selection)
   power_grid <- validate_power_grid(power_grid)
 
@@ -396,7 +419,9 @@ search_auto_cluster_variance <- function(cleaned,
       variance = spec$model,
       power = spec$power,
       interval_level = interval_level,
-      allow_zero_substrate = allow_zero_substrate
+      allow_zero_substrate = allow_zero_substrate,
+      method = method,
+      km_bounds = km_bounds
     )
   })
 
@@ -432,13 +457,16 @@ search_auto_cluster_variance <- function(cleaned,
 #' Fit a Cluster-Aware Michaelis-Menten Model
 #'
 #' Estimate Michaelis-Menten mean parameters from repeated or clustered assay
-#' data using a Ma-Genton-style working covariance with a random effect on
-#' `Vmax` and a low-dimensional residual working variance function.
+#' data using a random effect on `Vmax` and a residual working variance
+#' function. An opt-in Ma-Genton-style projected-score estimator leaves
+#' the random-effect density unspecified while retaining Gaussian residuals.
 #'
 #' @param data A data frame containing clustered Michaelis-Menten observations.
 #' @param s Name of the substrate concentration column.
 #' @param v Name of the response column.
 #' @param cluster Character vector naming one or more clustering columns.
+#'   Rows with missing values in any clustering column are removed with a
+#'   warning before fitting, cluster counting, and variance-model screening.
 #' @param variance Character string naming a built-in residual working variance
 #'   model. Use `"power"` with a fixed exponent or `"auto"` to compare
 #'   `log(S + 1)` against a grid of power functions.
@@ -453,6 +481,12 @@ search_auto_cluster_variance <- function(cleaned,
 #'   must be strictly positive.
 #' @param sort_x Logical; sort observations within each cluster by substrate
 #'   concentration.
+#' @param method Estimator: `"profile"` retains the existing profile/moment
+#'   algorithm; `"projected"` uses conditional projected scores with an identity
+#'   instrument and a stacked cluster-sandwich covariance. The latter does not
+#'   claim general semiparametric efficiency.
+#' @param km_bounds Optional positive increasing search bounds for `Km`,
+#'   available only with `method = "projected"`.
 #'
 #' @return An object of class `"cluster_mm"`.
 #' @export
@@ -468,7 +502,17 @@ cluster_mm <- function(data,
                        invalid_response_values = c(-9999),
                        invalid_substrate_values = numeric(0),
                        allow_zero_substrate = TRUE,
-                       sort_x = TRUE) {
+                       sort_x = TRUE,
+                       method = c("profile", "projected"),
+                       km_bounds = NULL) {
+  method <- match.arg(method)
+  if (identical(method, "profile") && !is.null(km_bounds)) {
+    stop("km_bounds is available only with method = 'projected' in cluster_mm().", call. = FALSE)
+  }
+  if (is.function(variance)) {
+    stop("Custom variance functions are supported by fit_mm(), screen_mm(), and group_mm(), not cluster_mm().",
+         call. = FALSE)
+  }
   variance <- normalize_variance_model(match.arg(variance))
   power_selection <- match.arg(power_selection)
   cleaned <- prepare_cluster_mm_data(
@@ -498,7 +542,9 @@ cluster_mm <- function(data,
         power_grid = power_grid,
         interval_level = interval_level,
         allow_zero_substrate = allow_zero_substrate,
-        call = match.call()
+        call = match.call(),
+        method = method,
+        km_bounds = km_bounds
       )
     )
   }
@@ -512,7 +558,9 @@ cluster_mm <- function(data,
     call = match.call(),
     variance_selection_mode = if (identical(variance, "power")) "manual" else NULL,
     variance_selection = if (identical(variance, "power")) "manual" else NULL,
-    power_grid = if (identical(variance, "power")) power else NULL
+    power_grid = if (identical(variance, "power")) power else NULL,
+    method = method,
+    km_bounds = km_bounds
   )
 }
 
@@ -529,7 +577,9 @@ refit_cluster_mm <- function(object, cleaned = object$cleaned_data) {
         power_grid = object$power_grid,
         interval_level = object$interval_level,
         allow_zero_substrate = object$allow_zero_substrate,
-        call = object$call
+        call = object$call,
+        method = if (is.null(object$estimation_method)) "profile" else object$estimation_method,
+        km_bounds = object$km_bounds
       )
     )
   }
@@ -543,7 +593,9 @@ refit_cluster_mm <- function(object, cleaned = object$cleaned_data) {
     call = object$call,
     variance_selection_mode = object$variance_selection_mode,
     variance_selection = object$variance_selection,
-    power_grid = object$power_grid
+    power_grid = object$power_grid,
+    method = if (is.null(object$estimation_method)) "profile" else object$estimation_method,
+    km_bounds = object$km_bounds
   )
 }
 
@@ -699,6 +751,9 @@ print.cluster_mm <- function(x, digits = max(3L, getOption("digits") - 2L), ...)
   cat("Call:\n")
   print(x$call)
   cat("\nMethod:", x$method, "\n")
+  if (identical(x$estimation_method, "projected")) {
+    cat("Covariance: stacked cluster sandwich; random-effect density unspecified\n")
+  }
   cat("Clusters:", x$n_clusters, "\n")
   cat("Initialization:", x$initialization_method, "\n")
   cat(
@@ -762,6 +817,8 @@ summary.cluster_mm <- function(object,
   out <- list(
     call = object$call,
     method = object$method,
+    estimation_method = object$estimation_method,
+    covariance_method = object$covariance_method,
     n_clusters = object$n_clusters,
     converged = object$converged,
     iterations = object$iterations,
@@ -807,6 +864,9 @@ print.summary.cluster_mm <- function(x, digits = max(3L, getOption("digits") - 2
   cat("Call:\n")
   print(x$call)
   cat("\nMethod:", x$method, "\n")
+  if (identical(x$estimation_method, "projected")) {
+    cat("Covariance: stacked cluster sandwich; random-effect density unspecified\n")
+  }
   cat("Clusters:", x$n_clusters, "\n")
   cat("Initialization:", x$initialization_method, "\n")
   cat(
@@ -863,6 +923,10 @@ predict.cluster_mm <- function(object,
                                level = object$interval_level,
                                ...) {
   interval <- match.arg(interval)
+  if (identical(object$estimation_method, "projected") && identical(interval, "prediction")) {
+    stop(paste("Prediction intervals require a specified random-effect distribution;",
+               "projected fits provide mean-confidence intervals only."), call. = FALSE)
+  }
   x_new <- if (is.null(newdata)) {
     object$x
   } else {
@@ -926,6 +990,9 @@ plot.cluster_mm <- function(x,
                             ...) {
   dots <- list(...)
   dots[c("x", "y", "xlab", "ylab", "main", "pch", "col")] <- NULL
+  if (missing(interval_type) && identical(x$estimation_method, "projected")) {
+    interval_type <- "confidence"
+  }
   interval_type <- match.arg(interval_type)
   x_seq <- seq(min(x$x), max(x$x), length.out = n_points)
   pred <- if (isTRUE(interval)) {

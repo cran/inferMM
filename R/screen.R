@@ -29,11 +29,11 @@ make_screen_row <- function(model,
     ))
   }
 
-  selected_model <- selected_variance_model_name(
+  selected_model <- if (identical(fit$variance_model, "custom")) model else selected_variance_model_name(
     fit$variance_model,
     fit$variance_power
   )
-  selected_model_label <- selected_variance_label(
+  selected_model_label <- if (identical(fit$variance_model, "custom")) fit$variance_label else selected_variance_label(
     fit$variance_model,
     fit$variance_power
   )
@@ -81,6 +81,9 @@ make_screen_row <- function(model,
 #'   be strictly positive.
 #' @param km_bounds Optional search bounds for `K_m`.
 #' @param quiet Logical; if `TRUE`, suppress progress messages.
+#' @param variance_functions Optional named list of fixed, vectorized positive
+#'   functions `h(S)` to screen alongside the built-in candidates. Names must
+#'   be unique and distinct from built-in candidate names.
 #'
 #' @return An object of class `"screen_mm"`.
 #' @export
@@ -94,7 +97,8 @@ screen_mm <- function(x,
                            interval_level = 0.95,
                            allow_zero_substrate = TRUE,
                            km_bounds = NULL,
-                           quiet = FALSE) {
+                           quiet = FALSE,
+                           variance_functions = NULL) {
   validated <- validate_mm_inputs(x, y, allow_zero_substrate = allow_zero_substrate)
   power_selection <- match.arg(power_selection)
   candidates <- prepare_variance_candidates(
@@ -102,7 +106,8 @@ screen_mm <- function(x,
     power_values = power_values,
     include_auto = include_auto,
     power_selection = power_selection,
-    power_grid = power_grid
+    power_grid = power_grid,
+    variance_functions = variance_functions
   )
   fits <- list()
   rows <- vector("list", length(candidates))

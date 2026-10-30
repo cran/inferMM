@@ -14,7 +14,7 @@
 #'   `method = "bootstrap"`: `"studentized"`, `"basic"`, or `"percentile"`.
 #' @param wild_weights Wild-bootstrap multipliers used when
 #'   `bootstrap_type = "wild"`: `"mammen"` or `"rademacher"`.
-#' @param seed Deprecated and ignored. Call [stats::set.seed()] before
+#' @param seed Deprecated and ignored. Call [set.seed()] before
 #'   `report_mm()` when reproducible bootstrap output is needed.
 #' @param interval_type Character string indicating whether the plotted band
 #'   should be `"confidence"`, `"prediction"`, or `"none"`.
@@ -42,11 +42,12 @@ report_mm <- function(object,
   }
 
   method <- match.arg(method)
-  if (inherits(object, "cluster_mm") && missing(bootstrap_type)) {
+  pairs_only <- inherits(object, "cluster_mm") || inherits(object, "fit_mm_moments")
+  if (pairs_only && missing(bootstrap_type)) {
     bootstrap_type <- "pairs"
   }
 
-  bootstrap_type <- if (inherits(object, "cluster_mm")) {
+  bootstrap_type <- if (pairs_only) {
     match.arg(bootstrap_type, c("pairs"))
   } else {
     match.arg(bootstrap_type)

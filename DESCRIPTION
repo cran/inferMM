@@ -1,7 +1,7 @@
 Package: inferMM
 Type: Package
 Title: Variance-Aware Michaelis-Menten Estimation and Inference
-Version: 0.0.3
+Version: 0.1.1
 Authors@R: c(
     person(given = "Mijeong", family = "Kim", role = c("aut", "cre"),
            email = "m.kim@ewha.ac.kr"),
@@ -11,8 +11,11 @@ Authors@R: c(
 Description: Variance-aware Michaelis-Menten estimation, model screening,
     grouped enzyme-kinetic analyses, and clustered repeated-measurement
     workflows. The package implements profile-score estimators under
-    working variance functions, together with a lightweight cluster-aware
-    working-covariance extension, Wald and bootstrap confidence intervals,
+    built-in or user-defined fixed working variance functions for single
+    curves, optional higher-moment estimating equations for independent
+    observations with asymmetric errors, and a lightweight cluster-aware
+    working-covariance extension with optional conditional projected scores
+    for an unspecified random-effect density, Wald and bootstrap confidence intervals,
     prediction utilities, and simulation helpers. Related methodology is
     discussed by Kim and Ma (2012) <doi:10.1007/s10463-011-0332-y>, Kim
     (2023) <doi:10.1002/sta4.606>, and Ma and Genton (2010)
@@ -26,10 +29,10 @@ Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 NeedsCompilation: no
-Packaged: 2026-06-04 05:09:00 UTC; mijeongkim
 Author: Mijeong Kim [aut, cre],
   Minkyoung Cha [aut],
   Ah Young Jeong [aut]
 Maintainer: Mijeong Kim <m.kim@ewha.ac.kr>
+Packaged: 2026-10-28 01:39:07 UTC; mijeongkim
 Repository: CRAN
-Date/Publication: 2026-06-04 06:30:02 UTC
+Date/Publication: 2026-10-30 04:00:02 UTC

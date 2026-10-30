@@ -10,13 +10,20 @@ variance_shape_hill <- function(x, s0 = 1, t2 = 9, c = 20, alpha = 2) {
   s0 + t2 * x^alpha / (c^alpha + x^alpha)
 }
 
-draw_standardized_error <- function(n, error = c("normal", "skewed"), skew_shape = 4) {
+draw_standardized_error <- function(n, error = c("normal", "skewed", "student_t"),
+                                     skew_shape = 4, df = 10) {
   error <- match.arg(error)
 
   if (identical(error, "normal")) {
     return(stats::rnorm(n))
   }
 
+  if (identical(error, "student_t")) {
+    df <- moment_scalar(df, "df", lower = 4)
+    return(stats::rt(n, df = df) * sqrt((df - 2) / df))
+  }
+
+  skew_shape <- moment_scalar(skew_shape, "skew_shape")
   z <- stats::rgamma(n, shape = skew_shape, scale = 1)
   (z - skew_shape) / sqrt(skew_shape)
 }
@@ -24,7 +31,7 @@ draw_standardized_error <- function(n, error = c("normal", "skewed"), skew_shape
 #' Simulate Michaelis-Menten Data
 #'
 #' Generate a synthetic Michaelis-Menten dataset with bounded heteroscedastic
-#' variance and either Gaussian or moderately skewed errors.
+#' variance and Gaussian, centered gamma, or standardized Student-t errors.
 #'
 #' @param n Number of observations when `x` is not supplied.
 #' @param x Optional substrate concentration grid.
@@ -34,8 +41,9 @@ draw_standardized_error <- function(n, error = c("normal", "skewed"), skew_shape
 #' @param error Character string naming the error distribution.
 #' @param s0,t2,c,a,alpha Variance-shape parameters.
 #' @param skew_shape Shape parameter for the skewed gamma-based error.
-#' @param seed Deprecated and ignored. Call [stats::set.seed()] before
+#' @param seed Deprecated and ignored. Call [set.seed()] before
 #'   `simulate_mm_data()` if reproducibility is needed.
+#' @param df Degrees of freedom greater than four for Student-t errors.
 #'
 #' @return A data frame containing the simulated observations.
 #' @export
@@ -44,14 +52,15 @@ simulate_mm_data <- function(n = 100,
                              vmax = 100,
                              km = 20,
                              variance_shape = c("mm", "exp", "hill"),
-                             error = c("normal", "skewed"),
+                             error = c("normal", "skewed", "student_t"),
                              s0 = 1,
                              t2 = 9,
                              c = 20,
                              a = 0.05,
                              alpha = 2,
                              skew_shape = 4,
-                             seed = NULL) {
+                             seed = NULL,
+                             df = 10) {
   variance_shape <- match.arg(variance_shape)
   error <- match.arg(error)
 
@@ -67,7 +76,7 @@ simulate_mm_data <- function(n = 100,
 
   true_mean <- mm_mean(x, vmax, km)
   true_variance <- variance_fun(x)
-  z <- draw_standardized_error(length(x), error = error, skew_shape = skew_shape)
+  z <- draw_standardized_error(length(x), error = error, skew_shape = skew_shape, df = df)
   y <- true_mean + sqrt(true_variance) * z
 
   data.frame(

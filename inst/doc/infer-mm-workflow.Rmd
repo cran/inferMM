@@ -82,6 +82,134 @@ screen$table[, c("model", "selected_model", "quasi_aic", "quasi_bic", "rmse")]
 The screening table is ordered by quasi-AIC, with quasi-BIC and RMSE reported
 as secondary summaries.
 
+## User-defined fixed variance functions
+
+For a single curve, a function can replace a built-in variance name. It defines
+the shape `h(S)` in `Var(Y | S) = gamma h(S)`, not the standard deviation.
+
+```{r}
+h <- variance_function(function(S) 1 + S / 20,
+                       label = "Var = gamma (1 + S/20)")
+custom_fit <- fit_mm(one_curve$s_uM, one_curve$v_uM_per_min, variance = h)
+summary(custom_fit)
+confint(custom_fit)
+predict(custom_fit, newdata = c(0, 10, 40), interval = "prediction")
+
+custom_shapes <- list(
+  linear_floor = function(S) 1 + S / 20,
+  saturation = function(S) 1 + 9 * S / (20 + S)
+)
+custom_screen <- screen_mm(
+  one_curve$s_uM, one_curve$v_uM_per_min,
+  variance_models = c("constant", "sqrt"),
+  variance_functions = custom_shapes, quiet = TRUE
+)
+custom_screen$table[, c("model", "quasi_aic", "quasi_bic", "success")]
+```
+
+The function must be deterministic, vectorized, and pointwise, returning one
+finite strictly positive numeric value for each input concentration, including
+zero if used. Values must not depend on the other concentrations in the vector.
+For example, a constant shape should return `rep(1, length(S))`, not a scalar.
+Invalid values or lengths cause errors; screening records candidate-specific
+errors and continues with the remaining candidates. Names must be unique and
+must not duplicate built-in candidates. For custom-only screening, specify
+`variance_models = character(0)`.
+
+Only Km requires numerical search for a fixed shape. Vmax and gamma retain their
+closed-form updates, and the function is reused for prediction and bootstrap
+refits. Internal scaling preserves the supplied variance model. The reported
+gamma is relative to the original shape, so its value changes inversely when
+the shape is multiplied by a positive constant.
+
+The constants 20 and 9 above are fixed, not estimated. Extra shape parameters,
+functions of unknown mean parameters, and data-adaptive nuisance estimation are
+not fitted by this interface. Intervals and information criteria condition on
+the supplied shape and omit external shape-estimation or selection uncertainty;
+prediction bands still use the working-normal approximation. User-defined
+variance shapes are not higher-moment efficient scores and do not imply smaller
+variance than identically weighted WNLS. They are currently supported for
+independent curves, not the clustered routine.
+
+## Optional higher-moment estimation for independent curves
+
+The user-defined variance shape above does not by itself incorporate
+asymmetry into the estimating equations. Version 0.1.1 adds the separate
+`fit_mm_moments()` estimator, based on the conditional-moment construction
+of Kim and Ma (2012), Section 3 (doi:10.1007/s10463-011-0332-y).
+It does not require a fully specified error density.
+
+```{r}
+set.seed(19)
+skew_dat <- simulate_mm_data(n = 200, error = "skewed", skew_shape = 4)
+assay_shape <- function(S) 1 + 9 * S / (20 + S)
+fit_hm <- fit_mm_moments(skew_dat$x, skew_dat$y, variance = assay_shape)
+summary(fit_hm)
+confint(fit_hm)
+fit_hm$vcov_joint
+
+fit_gamma <- fit_mm_moments(
+  skew_dat$x, skew_dat$y, variance = assay_shape,
+  moments = "gamma", shape = 4
+)
+coef(fit_gamma)
+predict(fit_gamma, c(10, 20, 80), interval = "confidence")
+```
+
+The default estimates constant standardized skewness and kurtosis from the
+profile pilot's residuals. The gamma option supplies fixed working moments
+of **centered** gamma errors; it does not fit a gamma density. Student-t
+working moments use `moments = "student_t", df = 10`. Custom standardized
+moment functions can be passed with `moments = "custom"`, `skewness`, and
+`kurtosis`; the latter is raw kurtosis, not excess kurtosis.
+
+For residual $r_i$ and variance $v_i=\gamma h(S_i)$, let
+$u_i=(r_i,r_i^2-v_i)^\top$. The conditional moment covariance is
+
+$$
+\Omega_i=\begin{pmatrix}
+v_i & s_i v_i^{3/2}\\
+s_i v_i^{3/2} & (k_i-1)v_i^2
+\end{pmatrix},
+$$
+
+where $s_i$ and $k_i$ are working skewness and kurtosis. With $g_i$ the MM
+mean gradient and
+$D_i=\begin{pmatrix}g_{i1}&g_{i2}&0\\0&0&h(S_i)\end{pmatrix}$,
+the joint equation is $\sum_i D_i^\top\Omega_i^{-1}u_i=0$.
+Positive definiteness requires $k_i-1-s_i^2>0$.
+
+Unlike the default profile route, the higher-moment fit solves jointly for
+$V_{\max},K_m,\gamma$ numerically. Its default `covariance = "model"`
+uses joint inverse working information, with the mean covariance extracted
+after allowing for the estimated scale. This interpretation requires
+appropriate conditional third and fourth moments. Optional
+`covariance = "sandwich"` uses the complete three-parameter equations.
+Wald intervals use a normal cutoff
+for the estimator, not an assumption that the individual errors are normal.
+
+Normal moments recover the original mean/variance equations. Constant
+symmetric Student-t moments recover the same point estimates; heavy tails
+alone do not give an efficiency improvement in this conditional-moment
+model. Under asymmetry, appropriate third/fourth moments can improve
+asymptotic efficiency, but pilot moment estimation can inflate finite-sample
+variance. Incorrect variance shapes can bias the new estimator, and a
+sandwich does not remove that bias. Neither exact 95% coverage nor uniform
+improvement is guaranteed.
+
+```{r, eval = FALSE}
+set.seed(20)
+confint(fit_hm, method = "bootstrap", B = 399)  # pairs only
+report_mm(fit_hm, interval_type = "confidence")
+```
+
+Pairs bootstrap repeats the pilot and higher-moment estimation. Prediction
+bands are not supplied because a few moments do not identify predictive
+quantiles; mean-confidence bands are pointwise. Quasi-AIC/BIC are omitted
+for these non-likelihood roots. This opt-in estimator is not yet connected
+to grouped selection or clustered fitting; those workflows below retain
+their original estimators.
+
 ## Grouped analyses
 
 For real enzyme panels we often fit many curves at once and then compare the
@@ -96,6 +224,7 @@ grouped <- group_mm(
   variance_models = c("constant", "log", "sqrt", "cuberoot"),
   power_values = c(0.4, 0.6),
   include_auto = TRUE,
+  variance_functions = custom_shapes,
   quiet = TRUE
 )
 
@@ -111,8 +240,8 @@ plot(grouped, interval_type = "confidence")
 
 ## Clustered repeated measurements
 
-For repeated or clustered assays, `cluster_mm()` uses a Ma-Genton-style
-working covariance with a random effect on `Vmax` and a low-dimensional
+By default, `cluster_mm()` uses a rank-one working covariance with a random
+effect on `Vmax` and a low-dimensional
 residual variance function. The bundled `alves_demo` data illustrate the
 interface on a small soil-enzyme panel.
 
@@ -134,6 +263,27 @@ head(predict(cluster_fit, newdata = seq(0, 700, length.out = 6),
 Because the bundled example contains only three cores, the printed summary
 reports point estimates by default and treats interval output as an explicit
 sensitivity analysis.
+
+An optional `method = "projected"` uses an MM-specific adaptation of
+Ma and Genton (2010, Section 3.2),
+<https://doi.org/10.1111/j.1467-9868.2010.00741.x>. It leaves the random-effect
+density unspecified while retaining conditionally independent Gaussian
+residuals with a correct fixed variance shape. The identity-instrument
+projected score does not generally attain the semiparametric efficiency bound.
+Standard errors use a stacked independent-cluster sandwich, and only
+mean-confidence bands are returned. At least five clusters and two readings
+per cluster are required; this path is therefore not applied to the three-core
+example above. The package README provides a reproducible skewed-random-effect
+example. This is distinct from non-Gaussian independent residual estimation.
+
+Projected failures report a numerical stage, reason and available diagnostics
+in `inferMM_cluster_projected_error`; no estimate or interval is returned and
+no automatic method switch occurs. An incomplete numerical search can retain
+a verified interior root but warns explicitly. Inspect `fit$convergence`,
+especially the scaled joint score norm and search diagnostics. A non-positive
+variance-component moment has a separate reporting warning. For the default
+profile method, an iteration-limit warning marks `converged = FALSE`; such
+results should not be interpreted as converged fits.
 
 ## Simulation
 

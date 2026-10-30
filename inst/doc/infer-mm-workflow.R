@@ -51,6 +51,46 @@ screen <- screen_mm(
 screen$table[, c("model", "selected_model", "quasi_aic", "quasi_bic", "rmse")]
 
 ## -----------------------------------------------------------------------------
+h <- variance_function(function(S) 1 + S / 20,
+                       label = "Var = gamma (1 + S/20)")
+custom_fit <- fit_mm(one_curve$s_uM, one_curve$v_uM_per_min, variance = h)
+summary(custom_fit)
+confint(custom_fit)
+predict(custom_fit, newdata = c(0, 10, 40), interval = "prediction")
+
+custom_shapes <- list(
+  linear_floor = function(S) 1 + S / 20,
+  saturation = function(S) 1 + 9 * S / (20 + S)
+)
+custom_screen <- screen_mm(
+  one_curve$s_uM, one_curve$v_uM_per_min,
+  variance_models = c("constant", "sqrt"),
+  variance_functions = custom_shapes, quiet = TRUE
+)
+custom_screen$table[, c("model", "quasi_aic", "quasi_bic", "success")]
+
+## -----------------------------------------------------------------------------
+set.seed(19)
+skew_dat <- simulate_mm_data(n = 200, error = "skewed", skew_shape = 4)
+assay_shape <- function(S) 1 + 9 * S / (20 + S)
+fit_hm <- fit_mm_moments(skew_dat$x, skew_dat$y, variance = assay_shape)
+summary(fit_hm)
+confint(fit_hm)
+fit_hm$vcov_joint
+
+fit_gamma <- fit_mm_moments(
+  skew_dat$x, skew_dat$y, variance = assay_shape,
+  moments = "gamma", shape = 4
+)
+coef(fit_gamma)
+predict(fit_gamma, c(10, 20, 80), interval = "confidence")
+
+## ----eval = FALSE-------------------------------------------------------------
+# set.seed(20)
+# confint(fit_hm, method = "bootstrap", B = 399)  # pairs only
+# report_mm(fit_hm, interval_type = "confidence")
+
+## -----------------------------------------------------------------------------
 grouped <- group_mm(
   data = sdl_demo,
   s = "s_uM",
@@ -59,6 +99,7 @@ grouped <- group_mm(
   variance_models = c("constant", "log", "sqrt", "cuberoot"),
   power_values = c(0.4, 0.6),
   include_auto = TRUE,
+  variance_functions = custom_shapes,
   quiet = TRUE
 )
 
@@ -85,3 +126,4 @@ head(predict(cluster_fit, newdata = seq(0, 700, length.out = 6),
 set.seed(100)
 sim_dat <- simulate_mm_data(variance_shape = "hill", error = "skewed")
 head(sim_dat)
+

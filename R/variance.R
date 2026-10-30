@@ -76,7 +76,9 @@ auto_selected_label <- function(label, selection) {
 
 resolve_variance_spec <- function(variance = "log",
                                   power = NULL) {
-  variance <- normalize_variance_model(variance)
+  if (!is.function(variance)) {
+    variance <- normalize_variance_model(variance)
+  }
   fun <- variance_function(model = variance, power = power)
 
   list(
@@ -90,7 +92,8 @@ prepare_variance_candidates <- function(variance_models = default_variance_model
                                         power_values = NULL,
                                         include_auto = FALSE,
                                         power_selection = c("quasi_aic", "quasi_bic"),
-                                        power_grid = default_power_grid()) {
+                                        power_grid = default_power_grid(),
+                                        variance_functions = NULL) {
   power_selection <- match.arg(power_selection)
   power_grid <- validate_power_grid(power_grid)
 
@@ -148,20 +151,109 @@ prepare_variance_candidates <- function(variance_models = default_variance_model
   }
 
   keep <- !duplicated(vapply(candidates, `[[`, character(1), "id"))
-  candidates[keep]
+  candidates <- candidates[keep]
+
+  if (!is.null(variance_functions) && length(variance_functions)) {
+    ids <- names(variance_functions)
+    if (!is.list(variance_functions) || is.null(ids) || anyNA(ids) ||
+        any(!nzchar(trimws(ids))) || anyDuplicated(ids) ||
+        !all(vapply(variance_functions, is.function, logical(1)))) {
+      stop("variance_functions must be a named list of functions with unique, non-empty names.",
+           call. = FALSE)
+    }
+    reserved <- c("constant", "log", "sqrt", "cuberoot", "power", "auto",
+                  "custom", "x_half", "x_third", "cube_root", "power_auto",
+                  "auto_power", vapply(candidates, `[[`, character(1), "id"))
+    if (any(ids %in% reserved)) {
+      stop("Custom variance function names must not duplicate built-in candidate names.",
+           call. = FALSE)
+    }
+    custom <- lapply(seq_along(variance_functions), function(i) {
+      fun <- variance_functions[[i]]
+      label <- attr(fun, "variance_label", exact = TRUE)
+      if (is.null(label)) {
+        label <- paste0("Var = gamma h(S) [", ids[i], "]")
+      }
+      fun <- variance_function(fun, label = label)
+      list(id = ids[i], label = label, fit_args = list(variance = fun))
+    })
+    candidates <- c(candidates, custom)
+  } else if (!is.null(variance_functions) && !is.list(variance_functions)) {
+    stop("variance_functions must be a named list of functions.", call. = FALSE)
+  }
+
+  if (!length(candidates)) {
+    stop("Supply at least one built-in or custom variance candidate.", call. = FALSE)
+  }
+  candidates
+}
+
+validate_custom_variance_values <- function(values, x) {
+  if (!is.numeric(values) || is.complex(values) || !is.null(dim(values)) ||
+      length(values) != length(x)) {
+    stop("A custom variance function must return a numeric vector with one value per concentration.",
+         call. = FALSE)
+  }
+  if (any(!is.finite(values)) || any(values <= 0)) {
+    stop("A custom variance function must return only finite, strictly positive values.",
+         call. = FALSE)
+  }
+  as.numeric(values)
+}
+
+evaluate_variance_function <- function(fun, x) {
+  values <- fun(x)
+  if (identical(attr(fun, "variance_model", exact = TRUE), "custom")) {
+    return(validate_custom_variance_values(values, x))
+  }
+  safe_pos(values)
 }
 
 #' Create Working Variance Functions
 #'
 #' Construct a working variance function for Michaelis-Menten models.
 #'
-#' @param model Character string naming the working variance specification.
+#' @param model A built-in model name or a vectorized function of concentration
+#'   returning one finite, strictly positive variance-shape value per input.
 #' @param power Optional exponent used when `model = "power"`.
+#' @param label Optional descriptive label for a user-defined function.
 #'
 #' @return A function of substrate concentration `x`.
 #' @export
 variance_function <- function(model = c("constant", "log", "sqrt", "cuberoot", "power"),
-                              power = NULL) {
+                              power = NULL,
+                              label = NULL) {
+  if (is.function(model)) {
+    if (!is.null(power)) {
+      stop("power cannot be supplied with a custom variance function.", call. = FALSE)
+    }
+    if (is.null(label)) {
+      label <- attr(model, "variance_label", exact = TRUE)
+      if (is.null(label)) label <- "Var = gamma h(S) (user-defined)"
+    }
+    if (!is.character(label) || length(label) != 1L || is.na(label) ||
+        !nzchar(trimws(label))) {
+      stop("label must be a single non-empty character string.", call. = FALSE)
+    }
+    if (identical(attr(model, "variance_model", exact = TRUE), "custom")) {
+      out <- model
+    } else {
+      force(model)
+      out <- function(x) {
+        values <- tryCatch(model(x), error = function(e) {
+          stop("Custom variance function failed: ", conditionMessage(e), call. = FALSE)
+        })
+        validate_custom_variance_values(values, x)
+      }
+    }
+    attr(out, "variance_model") <- "custom"
+    attr(out, "variance_label") <- label
+    attr(out, "variance_power") <- NULL
+    return(out)
+  }
+  if (!is.null(label)) {
+    stop("label is only used with a custom variance function.", call. = FALSE)
+  }
   model <- normalize_variance_model(match.arg(model))
 
   out <- switch(

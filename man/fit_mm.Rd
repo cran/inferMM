@@ -53,7 +53,9 @@ fit_mm(x, y,
   \item{x}{Numeric vector of substrate concentrations. For the plot method, a
   fitted object of class \code{"fit_mm"}.}
   \item{y}{Numeric vector of observed reaction velocities.}
-  \item{variance}{Character string naming a built-in working variance model.
+  \item{variance}{A built-in working variance model name or a fixed, vectorized
+  function of concentration returning strictly positive values. Use
+  \code{\link{variance_function}} to attach a label to a custom function.
   Use \code{"power"} with a fixed exponent or \code{"auto"} to compare
   \code{log(S + 1)} against a grid of power functions.}
   \item{power}{Optional exponent used when \code{variance = "power"}.}
@@ -79,7 +81,7 @@ fit_mm(x, y,
   \item{wild_weights}{Wild-bootstrap multipliers used when
   \code{bootstrap_type = "wild"}: \code{"mammen"} or
   \code{"rademacher"}.}
-  \item{seed}{Deprecated and ignored. Call \code{stats::set.seed()} before
+  \item{seed}{Deprecated and ignored. Call \code{set.seed()} before
   bootstrap-based summaries or intervals if reproducibility is needed.}
   \item{digits}{Number of printed digits.}
   \item{newdata}{Optional numeric vector of new substrate concentrations.}
@@ -95,6 +97,8 @@ fit_mm(x, y,
 }
 \value{
 The main fitting function returns an object of class \code{"fit_mm"}.
+Its \code{convergence} component records the standardized score norm,
+tolerance, search method, candidate roots, and scaled information condition.
 \code{predict()} returns either a numeric vector or a data frame containing
 prediction intervals.
 }
@@ -105,7 +109,7 @@ concentration-dependent working variance specification.
 \details{
 Built-in working variance models are \code{"constant"}, \code{"log"},
 \code{"sqrt"}, \code{"cuberoot"}, \code{"power"}, and \code{"auto"}.
-All built-in single-curve fits use the Michaelis-Menten profile-score
+All single-curve fits use the Michaelis-Menten profile-score
 estimator from the companion methodology work, with the constant-variance case
 treated as the special case \eqn{h(S) \equiv 1}. Confidence intervals can be
 computed either from the default asymptotic Wald approximation or from a
@@ -117,6 +121,61 @@ in that setting, \code{confint()} remains available as an explicit sensitivity
 analysis tool and issues a warning. The automatic option compares
 \code{log(S + 1)} with a user-supplied grid of \eqn{S^p} working variance
 functions and keeps the best fit according to quasi-AIC or quasi-BIC.
+
+The profile search examines sign-changing brackets on a 400-point log grid
+and verifies the mean score equations after solving. The diagnostic projects
+the \eqn{K_m} score direction off the eliminated \eqn{V_{\max}} direction
+and standardizes its residual inner product by both weighted norms; the
+\eqn{V_{\max}} equation is also checked. The maximum absolute standardized
+score must not exceed \eqn{10^{-7}}. If no bracketed root is verified,
+minimization of the squared standardized profile score supplies additional
+candidates, not automatically accepted estimates. Among detected positive
+interior roots passing these checks, the smallest weighted residual sum of
+squares determines the fitted root. A finite grid does not guarantee finding
+every root or a global minimum.
+
+Candidates within \eqn{10^{-6}} of either log search bound are rejected,
+as are non-positive or non-finite parameters and numerically zero residual
+variance. The mean information is scaled by its gradient-column magnitudes;
+a reciprocal condition number below \eqn{10^{-12}} stops covariance
+calculation. No ridge term is added to obtain the single-curve Wald covariance.
+These checks do not guarantee identifiability or accurate finite-sample coverage.
+
+Profile validation errors have class \code{inferMM_profile_error}, also
+inheriting from \code{inferMM_convergence_error}. They identify the failure
+stage, reason, search bounds, score norm, tolerance and candidate count, with
+information conditioning where relevant. No fit or confidence intervals are
+returned on these errors. Use \code{tryCatch()} to inspect the condition.
+Automatic variance selection records unsuccessful candidates in
+\code{variance_candidate_table} using \code{success = 0} and an
+\code{error_message}; they cannot be selected. If every candidate fails,
+selection stops. Screening and grouped workflows likewise record failures
+without reporting estimates or intervals for those curves. The profile pilot
+of \code{\link{fit_mm_moments}} uses the same root-validation checks;
+the later joint higher-moment solve has its own diagnostics. These new
+single-curve checks do not replace the separate clustered solver.
+
+A custom function specifies \eqn{h(S)} in
+\eqn{\operatorname{Var}(Y\mid S)=\gamma h(S)}; see
+\code{\link{variance_function}} for its input/output contract. Only \eqn{K_m}
+requires numerical search, followed by closed-form updates for \eqn{V_{\max}}
+and \eqn{\gamma}. The stored \code{variance_fun} is reused for new-data
+prediction and wild or pairs bootstrap refitting. Custom shapes are normalized
+internally for numerical scaling, without clipping; the reported \code{scale}
+is \eqn{\gamma} for the original supplied shape. Multiplying the shape by a
+positive constant changes \eqn{\gamma} inversely, not the fitted variance.
+Extremely ill-scaled shapes can still produce numerical errors.
+
+Custom shape parameters are not estimated. Wald covariance and working-Gaussian
+prediction bands condition on the fixed supplied shape. Quasi-AIC and quasi-BIC
+count three fitted parameters (\eqn{V_{\max}}, \eqn{K_m}, \eqn{\gamma});
+they do not account for coefficients fitted externally inside a custom function
+or for variance-model selection uncertainty. Free parameters, shapes depending on
+the fitted mean parameters, and data-adaptive variance-function estimation are
+outside this interface. The feature does not implement conditional third/fourth
+moment estimation or imply an efficiency gain over identically weighted
+nonlinear least squares. Prediction bands retain the existing working-normal
+approximation rather than estimating skewed predictive quantiles.
 }
 \examples{
 one_curve <- subset(sdl_demo, enzyme == "1111")
@@ -152,6 +211,13 @@ confint(
   wild_weights = "mammen"
 )
 head(predict(fit, newdata = seq(0, 80, length.out = 6), interval = "prediction"))
+
+h <- variance_function(function(S) 1 + S / 20,
+                       label = "Var = gamma (1 + S/20)")
+fit_custom <- fit_mm(one_curve$s_uM, one_curve$v_uM_per_min, variance = h)
+summary(fit_custom)
+confint(fit_custom)
+head(predict(fit_custom, newdata = c(0, 10, 40), interval = "prediction"))
 
 \donttest{
 plot(fit)

@@ -10,7 +10,7 @@ group_mm(data, s, v, groups = NULL,
   power_grid = default_power_grid(), interval_level = 0.95,
   invalid_response_values = c(-9999),
   invalid_substrate_values = numeric(0), allow_zero_substrate = TRUE,
-  sort_x = TRUE, quiet = FALSE)
+  sort_x = TRUE, quiet = FALSE, variance_functions = NULL)
 
 \method{print}{group_mm}(x,
   digits = max(3L, getOption("digits") - 2L), ...)
@@ -42,6 +42,9 @@ group_mm(data, s, v, groups = NULL,
   must be strictly positive.}
   \item{sort_x}{Logical; sort observations within each group by concentration.}
   \item{quiet}{Logical; if \code{TRUE}, suppress progress messages.}
+  \item{variance_functions}{Optional named list of fixed, vectorized positive
+  functions \eqn{h(S)}, forwarded to \code{\link{screen_mm}} within every group.
+  Use \code{variance_models = character(0)} for custom-only comparisons.}
   \item{x}{A grouped fit object for the print and plot methods.}
   \item{which_groups}{Optional subset of groups to plot, matched against
   \code{group_id} or \code{group_label}.}
@@ -65,6 +68,13 @@ summaries, augmented residual output, grouped rankings, and fitted objects.
 Clean a data frame, fit one or more working variance models within each group,
 and compare the competing fits using quasi-AIC as the primary criterion, with
 quasi-BIC and RMSE reported alongside it.
+}
+\details{
+Custom variance functions use the same definition in every group and must obey
+the contract in \code{\link{variance_function}}. Group-specific scales are
+estimated, but shape parameters in the functions are treated as fixed. Ranking
+criteria and intervals omit uncertainty from external shape estimation or model
+selection. This is a set of separate single-curve fits, not a clustered model.
 }
 \examples{
 grouped <- group_mm(

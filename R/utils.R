@@ -92,6 +92,10 @@ refit_fit_mm <- function(object, x = object$x, y = object$y) {
     stop("object must inherit from 'fit_mm'.")
   }
 
+  if (inherits(object, "fit_mm_moments")) {
+    return(refit_mm_moments(object, x, y))
+  }
+
   if (identical(object$variance_selection_mode, "auto")) {
     return(
       fit_mm(
@@ -110,7 +114,11 @@ refit_fit_mm <- function(object, x = object$x, y = object$y) {
   fit_mm(
     x = x,
     y = y,
-    variance = object$variance_model,
+    variance = if (identical(object$variance_model, "custom")) {
+      object$variance_fun
+    } else {
+      object$variance_model
+    },
     power = object$variance_power,
     interval_level = object$interval_level,
     km_bounds = object$km_bounds,
@@ -160,6 +168,9 @@ bootstrap_fit_mm <- function(object,
                              wild_weights = c("mammen", "rademacher"),
                              seed = NULL) {
   bootstrap_type <- match.arg(bootstrap_type)
+  if (inherits(object, "fit_mm_moments") && bootstrap_type != "pairs") {
+    stop("Higher-moment bootstrap inference supports pairs resampling only.", call. = FALSE)
+  }
   wild_weights <- match.arg(wild_weights)
   B <- as.integer(B)
 
@@ -461,10 +472,18 @@ cluster_bootstrap_interval <- function(object,
   )
 }
 
-quasi_metrics <- function(y, fitted, variance_hat, k = 3L) {
+quasi_metrics <- function(y, fitted, variance_hat, k = 3L, clamp = TRUE) {
   residuals <- y - fitted
-  variance_hat <- safe_pos(variance_hat)
-  quasi_loglik <- -0.5 * sum(log(2 * pi * variance_hat) + residuals^2 / variance_hat)
+  if (isTRUE(clamp)) {
+    variance_hat <- safe_pos(variance_hat)
+    quasi_loglik <- -0.5 * sum(log(2 * pi * variance_hat) + residuals^2 / variance_hat)
+  } else {
+    validate_custom_variance_values(variance_hat, y)
+    quasi_loglik <- -0.5 * sum(log(2 * pi) + log(variance_hat) + residuals^2 / variance_hat)
+    if (!is.finite(quasi_loglik)) {
+      stop("Non-finite working likelihood for the custom variance fit.", call. = FALSE)
+    }
+  }
   n <- length(y)
 
   list(
